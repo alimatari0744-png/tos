@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          created_at: string
+          details: string | null
+          entity: string | null
+          entity_label: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          created_at?: string
+          details?: string | null
+          entity?: string | null
+          entity_label?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          created_at?: string
+          details?: string | null
+          entity?: string | null
+          entity_label?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           created_at: string
@@ -184,6 +217,7 @@ export type Database = {
           name: string | null
           phone: string | null
           property_ref: string | null
+          source: string
         }
         Insert: {
           created_at?: string
@@ -191,6 +225,7 @@ export type Database = {
           name?: string | null
           phone?: string | null
           property_ref?: string | null
+          source?: string
         }
         Update: {
           created_at?: string
@@ -198,6 +233,7 @@ export type Database = {
           name?: string | null
           phone?: string | null
           property_ref?: string | null
+          source?: string
         }
         Relationships: []
       }
@@ -286,6 +322,8 @@ export type Database = {
         Row: {
           contact_email: string | null
           contact_phone: string | null
+          footer_text_ar: string | null
+          footer_text_en: string | null
           hero_image: string | null
           hero_subtitle_ar: string | null
           hero_subtitle_en: string | null
@@ -296,12 +334,18 @@ export type Database = {
           prev_hero_image: string | null
           prev_logo_image: string | null
           primary_color: string | null
+          privacy_ar: string | null
+          privacy_en: string | null
+          terms_ar: string | null
+          terms_en: string | null
           updated_at: string
           whatsapp_number: string | null
         }
         Insert: {
           contact_email?: string | null
           contact_phone?: string | null
+          footer_text_ar?: string | null
+          footer_text_en?: string | null
           hero_image?: string | null
           hero_subtitle_ar?: string | null
           hero_subtitle_en?: string | null
@@ -312,12 +356,18 @@ export type Database = {
           prev_hero_image?: string | null
           prev_logo_image?: string | null
           primary_color?: string | null
+          privacy_ar?: string | null
+          privacy_en?: string | null
+          terms_ar?: string | null
+          terms_en?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }
         Update: {
           contact_email?: string | null
           contact_phone?: string | null
+          footer_text_ar?: string | null
+          footer_text_en?: string | null
           hero_image?: string | null
           hero_subtitle_ar?: string | null
           hero_subtitle_en?: string | null
@@ -328,8 +378,33 @@ export type Database = {
           prev_hero_image?: string | null
           prev_logo_image?: string | null
           primary_color?: string | null
+          privacy_ar?: string | null
+          privacy_en?: string | null
+          terms_ar?: string | null
+          terms_en?: string | null
           updated_at?: string
           whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      staff_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          permission: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          permission: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          permission?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -386,6 +461,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_perm: { Args: { _perm: string; _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
