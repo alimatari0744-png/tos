@@ -524,25 +524,11 @@ function SettingsTab() {
     setForm({ ...form, hero_image: form.prev_hero_image, prev_hero_image: form.hero_image });
   }
 
-  async function onLogo(file: File) {
-    const url = await uploadImage("logo", file);
-    if (url) setForm({ ...form, prev_logo_image: form.logo_image, logo_image: url });
-  }
-  function deleteLogo() {
-    setForm({ ...form, prev_logo_image: form.logo_image, logo_image: "" });
-  }
-  function revertLogo() {
-    setForm({ ...form, logo_image: form.prev_logo_image, prev_logo_image: form.logo_image });
-  }
-
   async function save() {
     setSaving(true);
     const payload = {
       hero_image: form.hero_image || null,
       prev_hero_image: form.prev_hero_image || null,
-      logo_image: form.logo_image || null,
-      prev_logo_image: form.prev_logo_image || null,
-      primary_color: form.primary_color || null,
       hero_title_ar: form.hero_title_ar,
       hero_title_en: form.hero_title_en,
       hero_subtitle_ar: form.hero_subtitle_ar,
@@ -567,9 +553,7 @@ function SettingsTab() {
     qc.invalidateQueries({ queryKey: ["admin_settings"] });
   }
 
-  const DEFAULT_PRIMARY = "#c97b3c";
-  const colorValue = form.primary_color?.trim() || DEFAULT_PRIMARY;
-  const presets = ["#c97b3c", "#0ea5e9", "#16a34a", "#9333ea", "#dc2626", "#0f172a", "#d97706", "#db2777"];
+
 
   return (
     <div className="space-y-6">
