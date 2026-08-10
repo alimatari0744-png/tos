@@ -524,25 +524,11 @@ function SettingsTab() {
     setForm({ ...form, hero_image: form.prev_hero_image, prev_hero_image: form.hero_image });
   }
 
-  async function onLogo(file: File) {
-    const url = await uploadImage("logo", file);
-    if (url) setForm({ ...form, prev_logo_image: form.logo_image, logo_image: url });
-  }
-  function deleteLogo() {
-    setForm({ ...form, prev_logo_image: form.logo_image, logo_image: "" });
-  }
-  function revertLogo() {
-    setForm({ ...form, logo_image: form.prev_logo_image, prev_logo_image: form.logo_image });
-  }
-
   async function save() {
     setSaving(true);
     const payload = {
       hero_image: form.hero_image || null,
       prev_hero_image: form.prev_hero_image || null,
-      logo_image: form.logo_image || null,
-      prev_logo_image: form.prev_logo_image || null,
-      primary_color: form.primary_color || null,
       hero_title_ar: form.hero_title_ar,
       hero_title_en: form.hero_title_en,
       hero_subtitle_ar: form.hero_subtitle_ar,
@@ -567,74 +553,11 @@ function SettingsTab() {
     qc.invalidateQueries({ queryKey: ["admin_settings"] });
   }
 
-  const DEFAULT_PRIMARY = "#c97b3c";
-  const colorValue = form.primary_color?.trim() || DEFAULT_PRIMARY;
-  const presets = ["#c97b3c", "#0ea5e9", "#16a34a", "#9333ea", "#dc2626", "#0f172a", "#d97706", "#db2777"];
+
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="mb-4 text-lg font-black text-foreground">شعار الموقع</h2>
-        <div className="mb-3 flex items-center gap-4">
-          <div className="flex h-24 w-40 items-center justify-center rounded-xl border border-border bg-background p-2">
-            {form.logo_image ? (
-              <img src={form.logo_image} alt="" className="max-h-full max-w-full object-contain" />
-            ) : (
-              <span className="text-xs text-muted-foreground">لا يوجد شعار (سيظهر المكان فارغًا)</span>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <FileButton onPick={onLogo} label="اختيار شعار جديد" />
-          {form.logo_image && (
-            <button onClick={deleteLogo} className="rounded-full bg-destructive px-5 py-2.5 text-sm font-bold text-destructive-foreground shadow-card transition-transform hover:scale-[1.02]">
-              حذف الشعار
-            </button>
-          )}
-          {form.prev_logo_image && (
-            <button onClick={revertLogo} className={btnGhost}>↺ إرجاع الشعار السابق</button>
-          )}
-        </div>
-        <p className="mt-2 text-xs text-muted-foreground">يظهر الشعار في أعلى وأسفل الموقع. لا تُحفظ التغييرات إلا بالضغط على «حفظ التغييرات».</p>
-      </section>
 
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="mb-1 text-lg font-black text-foreground">اللون الرئيسي للموقع</h2>
-        <p className="mb-4 text-xs text-muted-foreground">اللون المستخدم في الأزرار والأيقونات والعناصر البارزة. اختر أي لون وسيُطبَّق تلقائيًا.</p>
-        <div className="flex flex-wrap items-center gap-4">
-          <input
-            type="color"
-            value={colorValue}
-            onChange={(e) => set("primary_color", e.target.value)}
-            className="h-12 w-16 cursor-pointer rounded-lg border border-border bg-transparent"
-          />
-          <input
-            className={`${inputCls} w-32`}
-            dir="ltr"
-            value={form.primary_color ?? ""}
-            placeholder={DEFAULT_PRIMARY}
-            onChange={(e) => set("primary_color", e.target.value)}
-          />
-          {form.primary_color && (
-            <button onClick={() => set("primary_color", "")} className={btnGhost}>
-              ↺ اللون الافتراضي
-            </button>
-          )}
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {presets.map((c) => (
-            <button
-              key={c}
-              onClick={() => set("primary_color", c)}
-              style={{ backgroundColor: c }}
-              className={`h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 ${
-                colorValue.toLowerCase() === c.toLowerCase() ? "border-foreground" : "border-border"
-              }`}
-              aria-label={c}
-            />
-          ))}
-        </div>
-      </section>
 
       <section className="rounded-2xl border border-border bg-card p-5">
         <h2 className="mb-4 text-lg font-black text-foreground">الصورة الكبيرة (خلفية العنوان)</h2>
