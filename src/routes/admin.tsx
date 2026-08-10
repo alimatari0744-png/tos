@@ -573,68 +573,7 @@ function SettingsTab() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="mb-4 text-lg font-black text-foreground">شعار الموقع</h2>
-        <div className="mb-3 flex items-center gap-4">
-          <div className="flex h-24 w-40 items-center justify-center rounded-xl border border-border bg-background p-2">
-            {form.logo_image ? (
-              <img src={form.logo_image} alt="" className="max-h-full max-w-full object-contain" />
-            ) : (
-              <span className="text-xs text-muted-foreground">لا يوجد شعار (سيظهر المكان فارغًا)</span>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <FileButton onPick={onLogo} label="اختيار شعار جديد" />
-          {form.logo_image && (
-            <button onClick={deleteLogo} className="rounded-full bg-destructive px-5 py-2.5 text-sm font-bold text-destructive-foreground shadow-card transition-transform hover:scale-[1.02]">
-              حذف الشعار
-            </button>
-          )}
-          {form.prev_logo_image && (
-            <button onClick={revertLogo} className={btnGhost}>↺ إرجاع الشعار السابق</button>
-          )}
-        </div>
-        <p className="mt-2 text-xs text-muted-foreground">يظهر الشعار في أعلى وأسفل الموقع. لا تُحفظ التغييرات إلا بالضغط على «حفظ التغييرات».</p>
-      </section>
 
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="mb-1 text-lg font-black text-foreground">اللون الرئيسي للموقع</h2>
-        <p className="mb-4 text-xs text-muted-foreground">اللون المستخدم في الأزرار والأيقونات والعناصر البارزة. اختر أي لون وسيُطبَّق تلقائيًا.</p>
-        <div className="flex flex-wrap items-center gap-4">
-          <input
-            type="color"
-            value={colorValue}
-            onChange={(e) => set("primary_color", e.target.value)}
-            className="h-12 w-16 cursor-pointer rounded-lg border border-border bg-transparent"
-          />
-          <input
-            className={`${inputCls} w-32`}
-            dir="ltr"
-            value={form.primary_color ?? ""}
-            placeholder={DEFAULT_PRIMARY}
-            onChange={(e) => set("primary_color", e.target.value)}
-          />
-          {form.primary_color && (
-            <button onClick={() => set("primary_color", "")} className={btnGhost}>
-              ↺ اللون الافتراضي
-            </button>
-          )}
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {presets.map((c) => (
-            <button
-              key={c}
-              onClick={() => set("primary_color", c)}
-              style={{ backgroundColor: c }}
-              className={`h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 ${
-                colorValue.toLowerCase() === c.toLowerCase() ? "border-foreground" : "border-border"
-              }`}
-              aria-label={c}
-            />
-          ))}
-        </div>
-      </section>
 
       <section className="rounded-2xl border border-border bg-card p-5">
         <h2 className="mb-4 text-lg font-black text-foreground">الصورة الكبيرة (خلفية العنوان)</h2>
