@@ -8,6 +8,8 @@ export function LogoMark({ className = "h-10 w-10" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 64 64"
+      width="40"
+      height="40"
       className={className}
       aria-hidden="true"
       focusable="false"
