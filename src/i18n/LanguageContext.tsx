@@ -18,7 +18,7 @@ export const translations: Dict = {
   "nav.langToggle": { ar: "English", en: "العربية" },
 
   // hero
-  "hero.badge": { ar: "ثقة وإعمار للخدمات العقارية", en: "Thiqah Wa Emaar Real Estate" },
+  "hero.badge": { ar: "ثقة الإعمار للخدمات العقارية", en: "Thiqah Al-Emaar Real Estate" },
   "hero.title": { ar: "نبني الثقة، ونُعمّر المستقبل", en: "Building Trust, Developing the Future" },
   "hero.subtitle": {
     ar: "اكتشف أفضل العقارات المتاحة في المملكة العربية السعودية — فلل، أراضٍ، شقق ومشاريع استثمارية مختارة بعناية.",
@@ -28,14 +28,21 @@ export const translations: Dict = {
 
   // search
   "search.title": { ar: "ابحث عن عقارك", en: "Find Your Property" },
-  "search.desire": { ar: "الرغبة", en: "Purpose" },
+  "search.desire": { ar: "الغرض", en: "Purpose" },
   "search.city": { ar: "المدينة", en: "City" },
   "search.district": { ar: "الحي", en: "District" },
   "search.usage": { ar: "الاستخدام", en: "Usage" },
+  "search.type": { ar: "نوع العقار", en: "Property Type" },
   "search.all": { ar: "الكل", en: "All" },
+  "search.forSale": { ar: "للبيع", en: "For Sale" },
+  "search.forRent": { ar: "للإيجار", en: "For Rent" },
+  "search.allCities": { ar: "كل المدن", en: "All Cities" },
   "search.allDistricts": { ar: "كل الأحياء", en: "All Districts" },
+  "search.allTypes": { ar: "كل الأنواع", en: "All Types" },
+  "search.allUsages": { ar: "كل الاستخدامات", en: "All Uses" },
   "search.results": { ar: "عقار مطابق", en: "matching properties" },
-  "search.reset": { ar: "إعادة تعيين", en: "Reset" },
+  "search.reset": { ar: "مسح الفلاتر", en: "Clear filters" },
+  "search.filters": { ar: "تصفية", en: "Filters" },
 
   // map
   "map.title": { ar: "الخريطة العقارية", en: "Property Map" },
@@ -44,12 +51,8 @@ export const translations: Dict = {
   // properties
   "properties.title": { ar: "العروض العقارية", en: "Property Offers" },
   "properties.subtitle": {
-    ar: "نماذج للمعاينة — عقارات للبيع والشراء والإيجار مع صور في عدة مدن سعودية.",
-    en: "Preview samples — properties for sale, purchase and rent with photos across Saudi cities.",
-  },
-  "properties.demoBanner": {
-    ar: "نماذج للمعاينة — أمثلة جاهزة لعروض البيع والشراء والإيجار بالصور، ليتعرّف زائر المنصة على طبيعة المنتج.",
-    en: "Preview models — ready examples of sale, purchase and rental listings with photos, so visitors can see how the product works.",
+    ar: "اكتشف أحدث العقارات المتاحة للبيع والإيجار في مدن المملكة.",
+    en: "Discover the latest properties for sale and rent across Saudi cities.",
   },
   "properties.available": { ar: "متاحة", en: "Available" },
   "properties.sold": { ar: "مباعة", en: "Sold" },
@@ -108,6 +111,7 @@ export const translations: Dict = {
   "detail.locationTitle": { ar: "الموقع على الخريطة", en: "Location on Map" },
   "detail.requestThis": { ar: "استفسر عن هذا العقار", en: "Inquire About This Property" },
   "detail.gallery": { ar: "معرض الصور", en: "Gallery" },
+  "detail.closeGallery": { ar: "إغلاق الصورة", en: "Close image" },
   "detail.notFound": { ar: "لم يتم العثور على العقار", en: "Property not found" },
   "detail.descGeneric": {
     ar: "عقار مميز بموقع استراتيجي وتشطيب عالي الجودة، مناسب للسكن أو الاستثمار. تتوفر كافة الخدمات والمرافق القريبة. لمزيد من التفاصيل وحجز المعاينة تواصل معنا عبر زر الاستفسار.",
@@ -148,8 +152,8 @@ export const translations: Dict = {
   "map.viewOffer": { ar: "تفاصيل العرض", en: "View Offer" },
   "map.pageTitle": { ar: "خريطة العروض العقارية", en: "Properties Map" },
   "map.pageSubtitle": {
-    ar: "تصفّح جميع عروض ثقة وإعمار على الخريطة واضغط على أي موقع لعرض تفاصيله.",
-    en: "Browse all Thiqah Wa Emaar offers on the map and click any marker to view its details.",
+    ar: "تصفّح جميع عروض ثقة الإعمار على الخريطة واضغط على أي موقع لعرض تفاصيله.",
+    en: "Browse all Thiqah Al-Emaar offers on the map and click any marker to view its details.",
   },
 
   // whatsapp / footer
@@ -159,6 +163,44 @@ export const translations: Dict = {
   "footer.email": { ar: "البريد الرسمي", en: "Official Email" },
   "footer.phone": { ar: "رقم الهاتف", en: "Phone Number" },
   "footer.soon": { ar: "يُضاف لاحقاً", en: "Coming soon" },
+
+  // first-visit tour
+  "tour.skip": { ar: "تخطي", en: "Skip" },
+  "tour.next": { ar: "التالي", en: "Next" },
+  "tour.back": { ar: "السابق", en: "Back" },
+  "tour.done": { ar: "إنهاء الجولة", en: "Finish tour" },
+  "tour.step": { ar: "الخطوة", en: "Step" },
+  "tour.lastSlide": { ar: "الشريحة الأخيرة", en: "Last slide" },
+  "tour.finishTitle": { ar: "أصبحت جاهزاً", en: "You’re all set" },
+  "tour.finishBody": {
+    ar: "هذه آخر شريحة في الجولة. يمكنك الآن تصفح العروض، طلب عقار، أو التواصل مع فريق ثقة الإعمار في أي وقت.",
+    en: "This is the last slide. You can now browse listings, request a property, or contact the Thiqah Al-Emaar team anytime.",
+  },
+  "tour.welcomeTitle": { ar: "مرحباً بك في ثقة الإعمار", en: "Welcome to Thiqah Al-Emaar" },
+  "tour.welcomeBody": {
+    ar: "جولة سريعة تعرفك بأهم أجزاء الموقع: البحث، العروض، طلب عقار، والتواصل.",
+    en: "A short tour of search, listings, property requests, and contact.",
+  },
+  "tour.searchTitle": { ar: "ابحث عن عقارك", en: "Find a property" },
+  "tour.searchBody": {
+    ar: "اختر للبيع أو للإيجار، ثم اضغط أيقونة التصفية لتحديد المدينة ونوع العقار.",
+    en: "Choose for sale or rent, then tap the filter icon to set city and property type.",
+  },
+  "tour.listingsTitle": { ar: "تصفّح العروض", en: "Browse listings" },
+  "tour.listingsBody": {
+    ar: "اضغط أي عرض لرؤية الصور والتفاصيل والسعر، أو سجّل اهتمامك مباشرة.",
+    en: "Open any listing for photos, details and price, or register your interest.",
+  },
+  "tour.requestTitle": { ar: "اطلب عقارك", en: "Request a property" },
+  "tour.requestBody": {
+    ar: "إذا لم تجد طلبك، أرسل مواصفاتك وسيتواصل معك الفريق.",
+    en: "If you don’t find what you need, send your requirements and the team will contact you.",
+  },
+  "tour.whatsappTitle": { ar: "تواصل فوري", en: "Chat instantly" },
+  "tour.whatsappBody": {
+    ar: "زر واتساب للتواصل المباشر مع فريق ثقة الإعمار في أي وقت.",
+    en: "Use WhatsApp to reach the Thiqah Al-Emaar team anytime.",
+  },
 };
 
 interface LanguageContextValue {

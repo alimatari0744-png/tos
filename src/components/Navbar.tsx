@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { useSettings } from "@/lib/site-data";
+import { BrandLogo } from "@/components/BrandLogo";
 import {
   Sheet,
   SheetContent,
@@ -14,15 +14,13 @@ import {
 
 export function Navbar({ onRequest }: { onRequest: () => void }) {
   const { t } = useLanguage();
-  const { data: settings } = useSettings();
   const [open, setOpen] = useState(false);
-  const logoUrl = settings?.logo_image?.trim() || "";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         {/* Right (in RTL): mobile menu button + logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           {/* Mobile menu trigger — on the right */}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -33,9 +31,10 @@ export function Navbar({ onRequest }: { onRequest: () => void }) {
                 <Menu className="h-5 w-5" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-48 sm:w-56">
-              <SheetHeader>
-                <SheetTitle className="text-right">القائمة</SheetTitle>
+            <SheetContent side="right" className="w-64 sm:w-72">
+              <SheetHeader className="space-y-3 pt-6 text-start">
+                <SheetTitle className="sr-only">القائمة</SheetTitle>
+                <BrandLogo variant="wide" onClick={() => setOpen(false)} />
               </SheetHeader>
               <nav className="mt-6 flex flex-col gap-2">
                 <SheetClose asChild>
@@ -76,17 +75,7 @@ export function Navbar({ onRequest }: { onRequest: () => void }) {
             </SheetContent>
           </Sheet>
 
-          <Link to="/" className="flex items-center gap-2">
-            {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt="ثقة وإعمار للخدمات العقارية"
-                className="h-16 w-auto"
-              />
-            ) : (
-              <span className="sr-only">ثقة وإعمار</span>
-            )}
-          </Link>
+          <BrandLogo variant="auto" />
         </div>
 
 

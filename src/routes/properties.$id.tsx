@@ -7,6 +7,7 @@ import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { RequestPropertyDialog } from "@/components/RequestPropertyDialog";
 import { InterestDialog } from "@/components/InterestDialog";
 import { PropertyCard } from "@/components/PropertyCard";
+import { PropertyGallery } from "@/components/PropertyGallery";
 import {
   propertyImages,
   propertyTitle,
@@ -29,12 +30,12 @@ import { useLanguage } from "@/i18n/LanguageContext";
 export const Route = createFileRoute("/properties/$id")({
   head: () => ({
     meta: [
-      { title: "تفاصيل العقار | ثقة وإعمار" },
+      { title: "تفاصيل العقار | ثقة الإعمار" },
       {
         name: "description",
-        content: "تفاصيل العقار وعروض ثقة وإعمار العقارية في المملكة العربية السعودية.",
+        content: "تفاصيل العقار وعروض ثقة الإعمار العقارية في المملكة العربية السعودية.",
       },
-      { property: "og:title", content: "تفاصيل العقار | ثقة وإعمار" },
+      { property: "og:title", content: "تفاصيل العقار | ثقة الإعمار" },
     ],
   }),
   component: PropertyDetail,
@@ -88,7 +89,6 @@ function PropertyDetail() {
   const { data: settings } = useSettings();
   const [requestOpen, setRequestOpen] = useState(false);
   const [interestOpen, setInterestOpen] = useState(false);
-  const [active, setActive] = useState(0);
 
   if (isLoading) {
     return (
@@ -176,58 +176,19 @@ function PropertyDetail() {
 
         {/* Top: gallery (right) + summary specs (left) */}
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Gallery — compact, elegant */}
-          <div className="grid gap-3">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border">
-              <img
-                src={images[active]}
-                alt={title}
-                className="h-full w-full object-cover"
-              />
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="prev"
-                    onClick={() => setActive((i) => (i - 1 + images.length) % images.length)}
-                    className="absolute start-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground shadow-card transition-colors hover:bg-background"
-                  >
-                    ›
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="next"
-                    onClick={() => setActive((i) => (i + 1) % images.length)}
-                    className="absolute end-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground shadow-card transition-colors hover:bg-background"
-                  >
-                    ‹
-                  </button>
-                </>
-              )}
+          <PropertyGallery
+            images={images}
+            alt={title}
+            badge={
               <span
-                className={`absolute end-4 top-4 rounded-full px-4 py-1.5 text-sm font-bold text-primary-foreground ${
+                className={`absolute end-4 top-4 z-10 rounded-full px-4 py-1.5 text-sm font-bold text-primary-foreground ${
                   isSold ? "bg-destructive" : "bg-emerald-600"
                 }`}
               >
                 {isSold ? t("properties.sold") : t("properties.available")}
               </span>
-            </div>
-            {images.length > 1 && (
-              <div className="grid grid-cols-5 gap-2">
-                {images.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActive(i)}
-                    className={`aspect-[4/3] overflow-hidden rounded-lg border-2 transition-colors ${
-                      active === i ? "border-primary" : "border-transparent"
-                    }`}
-                  >
-                    <img src={img} alt="" className="h-full w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+            }
+          />
 
           {/* Summary — title, price, key specs, contact */}
           <div className="flex flex-col">

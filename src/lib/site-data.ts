@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { correctBrandName } from "@/lib/utils";
 import {
   DEMO_GALLERY,
   properties as fallbackProperties,
@@ -37,8 +38,42 @@ function fallbackImage(seed: string): string {
   return fallbackGallery[h % fallbackGallery.length];
 }
 
+function isBrokenImageUrl(url?: string | null): boolean {
+  if (!url) return true;
+  if (url.startsWith("/demo-properties/")) return false;
+  if (url.startsWith("/") || url.startsWith("blob:") || url.startsWith("data:")) return false;
+  return /unsplash\.com|lovable\.app|__l5e\/|r2\.dev/i.test(url);
+}
+
+function resolveMedia(row: {
+  id?: string;
+  ref?: string;
+  type_id?: string;
+  image?: string | null;
+  images?: string[] | null;
+}): { image: string; images?: string[] } {
+  const byRef = fallbackProperties.find((p) => p.ref === row.ref);
+  const byType = fallbackProperties.find((p) => p.typeId === row.type_id);
+  const local = byRef?.images?.length
+    ? { image: byRef.image, images: byRef.images }
+    : byType?.images?.length
+      ? { image: byType.image, images: byType.images }
+      : {
+          image: fallbackImage(String(row.id ?? row.ref ?? "x")),
+          images: fallbackGallery.slice(0, 4),
+        };
+
+  const rawImages = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
+  const rawImage = row.image || rawImages[0];
+  if (!isBrokenImageUrl(rawImage) && rawImages.every((u) => !isBrokenImageUrl(u))) {
+    return { image: rawImage as string, images: rawImages.length ? rawImages : undefined };
+  }
+  return local;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapProperty(row: any): Property {
+  const media = resolveMedia(row);
   return {
     id: row.id,
     ref: row.ref,
@@ -50,8 +85,8 @@ export function mapProperty(row: any): Property {
     area: Number(row.area) || 0,
     price: Number(row.price) || 0,
     status: row.status,
-    image: row.image || (Array.isArray(row.images) && row.images[0]) || fallbackImage(row.id),
-    images: Array.isArray(row.images) && row.images.length ? row.images : undefined,
+    image: media.image,
+    images: media.images,
     bedrooms: row.bedrooms ?? undefined,
     bathrooms: row.bathrooms ?? undefined,
     livingRooms: row.living_rooms ?? undefined,
@@ -88,7 +123,7 @@ export function useSettings() {
           "hero_image, hero_title_ar, hero_title_en, hero_subtitle_ar, hero_subtitle_en, whatsapp_number, contact_phone, contact_email, logo_image, primary_color, terms_ar, terms_en, privacy_ar, privacy_en, footer_text_ar, footer_text_en",
         )
         .maybeSingle();
-      return (data as SiteSettings) ?? null;
+      return correctBrandName((data as SiteSettings) ?? null);
     },
     staleTime: 60_000,
   });

@@ -36,7 +36,7 @@ export function Hero({ onRequest }: { onRequest: () => void }) {
         <p className="mt-5 max-w-2xl text-lg text-muted-foreground sm:text-xl">
           {subtitle}
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3" data-tour="request">
           <a
             href="#properties"
             className="gradient-primary rounded-full px-7 py-3 text-base font-bold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.03]"

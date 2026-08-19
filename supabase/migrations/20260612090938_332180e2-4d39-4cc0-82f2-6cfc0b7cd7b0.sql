@@ -52,8 +52,8 @@ insert into public.site_settings (id, whatsapp_number, contact_phone, contact_em
   hero_title_ar, hero_title_en, hero_subtitle_ar, hero_subtitle_en)
 values (true, '966500000000', '', '',
   'نبني الثقة ونعمر المستقبل', 'Building Trust, Developing the Future',
-  'ثقة وإعمار للخدمات العقارية — اكتشف أفضل العروض العقارية في المملكة',
-  'Thiqah Wa Emaar — discover the best real estate offers in the Kingdom');
+  'ثقة الإعمار للخدمات العقارية — اكتشف أفضل العروض العقارية في المملكة',
+  'Thiqah Al-Emaar — discover the best real estate offers in the Kingdom');
 
 -- PROPERTY TYPES
 create table public.property_types (

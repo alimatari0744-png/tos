@@ -6,19 +6,20 @@ import { PropertiesSection } from "@/components/PropertiesSection";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { RequestPropertyDialog } from "@/components/RequestPropertyDialog";
+import { AppTour } from "@/components/AppTour";
 import { useProperties, usePropertyTypes } from "@/lib/site-data";
 import { applyFilters, defaultFilters, type Filters } from "@/lib/filters";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ثقة وإعمار للخدمات العقارية | Thiqah Wa Emaar" },
+      { title: "ثقة الإعمار للخدمات العقارية | Thiqah Al-Emaar" },
       {
         name: "description",
         content:
-          "ثقة وإعمار للخدمات العقارية — اكتشف أفضل العروض العقارية في المملكة العربية السعودية من فلل وأراضٍ وشقق ومشاريع استثمارية.",
+          "ثقة الإعمار للخدمات العقارية — اكتشف أفضل العروض العقارية في المملكة العربية السعودية من فلل وأراضٍ وشقق ومشاريع استثمارية.",
       },
-      { property: "og:title", content: "ثقة وإعمار للخدمات العقارية" },
+      { property: "og:title", content: "ثقة الإعمار للخدمات العقارية" },
       {
         property: "og:description",
         content: "اكتشف أفضل العروض العقارية في المملكة العربية السعودية.",
@@ -52,6 +53,7 @@ function Index() {
       <Footer />
       <WhatsAppButton />
       <RequestPropertyDialog open={requestOpen} onOpenChange={setRequestOpen} />
+      <AppTour />
     </div>
   );
 }

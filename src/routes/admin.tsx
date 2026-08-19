@@ -15,6 +15,7 @@ import { logActivity, diffChanges, parseDetails } from "@/lib/activity";
 import { usageLabels, type Usage } from "@/data/catalog";
 import { useGeo, useTaxonomy, mapProperty } from "@/lib/site-data";
 import { LocationPicker } from "@/components/LocationPicker";
+import { correctBrandName } from "@/lib/utils";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const PROP_FIELD_LABELS: Record<string, string> = {
@@ -69,7 +70,7 @@ const PERMISSION_LABELS: Record<string, string> = {
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  head: () => ({ meta: [{ title: "لوحة التحكم | ثقة وإعمار" }] }),
+  head: () => ({ meta: [{ title: "لوحة التحكم | ثقة الإعمار" }] }),
   component: AdminPage,
 });
 
@@ -293,7 +294,7 @@ function AdminPage() {
     <div className="min-h-screen bg-background" dir="rtl">
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-          <h1 className="text-xl font-black text-foreground">لوحة تحكم ثقة وإعمار</h1>
+          <h1 className="text-xl font-black text-foreground">لوحة تحكم ثقة الإعمار</h1>
           <div className="flex items-center gap-2">
             <a href="/" className={btnGhost}>عرض الموقع</a>
             <button onClick={handleLogout} className={btnGhost}>خروج</button>
@@ -508,7 +509,7 @@ function SettingsTab() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [form, setForm] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => { if (data) setForm(correctBrandName(data)); }, [data]);
   if (!form) return <p className="text-muted-foreground">جارٍ التحميل…</p>;
 
   const set = (k: string, v: string) => setForm({ ...form, [k]: v });
@@ -526,7 +527,7 @@ function SettingsTab() {
 
   async function save() {
     setSaving(true);
-    const payload = {
+    const payload = correctBrandName({
       hero_image: form.hero_image || null,
       prev_hero_image: form.prev_hero_image || null,
       hero_title_ar: form.hero_title_ar,
@@ -542,7 +543,7 @@ function SettingsTab() {
       privacy_en: form.privacy_en || null,
       footer_text_ar: form.footer_text_ar || null,
       footer_text_en: form.footer_text_en || null,
-    };
+    });
     const changes = diffChanges(data ?? {}, payload, SETTINGS_FIELD_LABELS);
     const { error } = await supabase.from("site_settings").update(payload).eq("id", true);
     setSaving(false);
@@ -557,7 +558,22 @@ function SettingsTab() {
 
   return (
     <div className="space-y-6">
-
+      <section className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="mb-1 text-lg font-black text-foreground">شعارات الموقع</h2>
+        <p className="mb-4 text-xs text-muted-foreground">
+          الشعار المختصر يظهر في الجوال، والشعار المطوّل يُستخدم في الترويسة والتذييل وفي ترويسة البريد.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-border bg-background p-4">
+            <p className="mb-3 text-xs font-bold text-muted-foreground">مختصر (موبايل / أيقونة)</p>
+            <img src="/brand/logo-mark.png" alt="شعار ثقة الإعمار المختصر" className="h-16 w-16 rounded-2xl" />
+          </div>
+          <div className="rounded-xl border border-border bg-background p-4">
+            <p className="mb-3 text-xs font-bold text-muted-foreground">مطوّل (بريد / سطح المكتب)</p>
+            <img src="/brand/logo-email.png" alt="ثقة الإعمار للخدمات العقارية" className="h-16 w-auto max-w-full rounded-lg border border-border bg-white" />
+          </div>
+        </div>
+      </section>
 
       <section className="rounded-2xl border border-border bg-card p-5">
         <h2 className="mb-4 text-lg font-black text-foreground">الصورة الكبيرة (خلفية العنوان)</h2>
@@ -605,8 +621,8 @@ function SettingsTab() {
           <h2 className="mb-1 text-lg font-black text-foreground">نص حقوق النشر (أسفل الموقع)</h2>
           <p className="text-xs text-muted-foreground">يظهر في تذييل الموقع. اتركه فارغًا لإخفائه.</p>
         </div>
-        <div><label className={labelCls}>النص (عربي)</label><input className={inputCls} value={form.footer_text_ar ?? ""} placeholder="© 2026 ثقة وإعمار. جميع الحقوق محفوظة." onChange={(e) => set("footer_text_ar", e.target.value)} /></div>
-        <div><label className={labelCls}>النص (إنجليزي)</label><input className={inputCls} dir="ltr" value={form.footer_text_en ?? ""} placeholder="© 2026 Thiqah Wa Emaar. All rights reserved." onChange={(e) => set("footer_text_en", e.target.value)} /></div>
+        <div><label className={labelCls}>النص (عربي)</label><input className={inputCls} value={form.footer_text_ar ?? ""} placeholder="© 2026 ثقة الإعمار. جميع الحقوق محفوظة." onChange={(e) => set("footer_text_ar", e.target.value)} /></div>
+        <div><label className={labelCls}>النص (إنجليزي)</label><input className={inputCls} dir="ltr" value={form.footer_text_en ?? ""} placeholder="© 2026 Thiqah Al-Emaar. All rights reserved." onChange={(e) => set("footer_text_en", e.target.value)} /></div>
       </section>
 
       <section className="space-y-4 rounded-2xl border border-border bg-card p-5">

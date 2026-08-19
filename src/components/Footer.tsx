@@ -2,30 +2,21 @@ import { Link } from "@tanstack/react-router";
 import { Phone, Mail, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useSettings, whatsappNumber } from "@/lib/site-data";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export function Footer() {
   const { t, lang } = useLanguage();
   const { data: settings } = useSettings();
   const phone = settings?.contact_phone?.trim();
   const email = settings?.contact_email?.trim();
-  const logoUrl = settings?.logo_image?.trim() || "";
   const wa = whatsappNumber(settings);
   const footerText = (lang === "ar" ? settings?.footer_text_ar : settings?.footer_text_en)?.trim();
 
   return (
     <footer className="border-t border-border bg-secondary/30">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        {/* Logo — dedicated area at the top */}
         <div className="flex justify-center">
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt="ثقة وإعمار للخدمات العقارية"
-              className="h-24 w-auto"
-            />
-          ) : (
-            <span className="sr-only">ثقة وإعمار</span>
-          )}
+          <BrandLogo variant="wide" />
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:justify-between">

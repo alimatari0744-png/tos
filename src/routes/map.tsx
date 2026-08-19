@@ -13,16 +13,16 @@ import { applyFilters, defaultFilters, type Filters } from "@/lib/filters";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "الخريطة العقارية | ثقة وإعمار" },
+      { title: "الخريطة العقارية | ثقة الإعمار" },
       {
         name: "description",
         content:
-          "خريطة عروض ثقة وإعمار العقارية — تصفح مواقع العقارات المتاحة في المملكة العربية السعودية.",
+          "خريطة عروض ثقة الإعمار العقارية — تصفح مواقع العقارات المتاحة في المملكة العربية السعودية.",
       },
-      { property: "og:title", content: "الخريطة العقارية | ثقة وإعمار" },
+      { property: "og:title", content: "الخريطة العقارية | ثقة الإعمار" },
       {
         property: "og:description",
-        content: "تصفح مواقع عروض ثقة وإعمار العقارية على الخريطة.",
+        content: "تصفح مواقع عروض ثقة الإعمار العقارية على الخريطة.",
       },
     ],
   }),
@@ -48,21 +48,13 @@ function MapPage() {
           <p className="mt-2 text-muted-foreground">{t("map.pageSubtitle")}</p>
         </div>
 
-        {/* Search bar to narrow the map results */}
-        <div className="mb-6 rounded-3xl border border-border bg-secondary/30 p-4 sm:p-5">
-          <h3 className="mb-3 text-sm font-black text-foreground">{t("search.title")}</h3>
-          <SearchFilters filters={filters} setFilters={setFilters} countItems={properties} />
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-sm font-bold text-primary">
-              {filtered.length} {t("search.results")}
-            </span>
-            <button
-              onClick={() => setFilters({ ...defaultFilters })}
-              className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {t("search.reset")}
-            </button>
-          </div>
+        <div className="mb-6">
+          <SearchFilters
+            filters={filters}
+            setFilters={setFilters}
+            countItems={properties}
+            resultCount={filtered.length}
+          />
         </div>
 
         <MapSection items={filtered} height="70vh" />

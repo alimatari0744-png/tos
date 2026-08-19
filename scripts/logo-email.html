@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 1200px; height: 320px; background: #ffffff; overflow: hidden; }
+      body {
+        font-family: Cairo, "Segoe UI", Tahoma, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 28px;
+        padding: 0 48px;
+        direction: rtl;
+      }
+      .mark { width: 220px; height: 220px; flex-shrink: 0; }
+      .text { display: flex; flex-direction: column; gap: 6px; }
+      .name { font-size: 64px; font-weight: 900; color: #1B2A4A; line-height: 1.1; }
+      .tag { font-size: 28px; font-weight: 700; color: #B8893A; }
+      .en { font-size: 20px; font-weight: 600; color: #6E624E; letter-spacing: 0.04em; direction: ltr; }
+    </style>
+  </head>
+  <body>
+    <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gold" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#E1C27A"/>
+          <stop offset="1" stop-color="#B8893A"/>
+        </linearGradient>
+      </defs>
+      <rect width="64" height="64" rx="16" fill="#1B2A4A"/>
+      <rect x="4" y="4" width="56" height="56" rx="13" fill="none" stroke="url(#gold)" stroke-width="1.6"/>
+      <path d="M16 46V30c0-8.5 7.2-15.4 16-15.4S48 21.5 48 30v16" fill="none" stroke="url(#gold)" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M22 46V32.5c0-5.6 4.5-10.1 10-10.1s10 4.5 10 10.1V46" fill="none" stroke="#F7F1E6" stroke-width="2" stroke-linecap="round"/>
+      <path d="M32 14.2l1.7 1.7-1.7 1.7-1.7-1.7z" fill="url(#gold)"/>
+      <path d="M20 46h24" stroke="url(#gold)" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+    <div class="text">
+      <div class="name">ثقة الإعمار</div>
+      <div class="tag">للخدمات العقارية</div>
+      <div class="en">Thiqah Al-Emaar Real Estate</div>
+    </div>
+  </body>
+</html>
