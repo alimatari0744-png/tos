@@ -36,46 +36,7 @@ export interface Property {
   lng?: number;
 }
 
-const U = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=80`;
-
-const SHOTS: Record<string, string> = {
-  "villa-01": "photo-1613490493576-7fde63acd811",
-  "villa-02": "photo-1600596542815-ffad4c1539a9",
-  "villa-03": "photo-1600585154340-be6161a56a0c",
-  "villa-04": "photo-1564013799919-ab600027ffc6",
-  "villa-05": "photo-1600047509807-ba8f99d2cdbc",
-  "villa-06": "photo-1512917774080-9991f1c4c750",
-  "villa-07": "photo-1600607687644-c7171b42498b",
-  "villa-09": "photo-1600566753086-00f18fb6b3ea",
-  "villa-10": "photo-1613977257363-707ba564dd11",
-  "apt-01": "photo-1522708323590-d24e7bb74047",
-  "apt-02": "photo-1502672260266-1c1ef2d93688",
-  "apt-03": "photo-1493809842364-82806fdbf227",
-  "apt-04": "photo-1505691938895-1758d7afbd2d",
-  "apt-05": "photo-1560448204-e02f11e3a0d2",
-  "apt-09": "photo-1600210492486-724fe5c67fb0",
-  "bldg-01": "photo-1545324418-cc1a3fa10c00",
-  "bldg-02": "photo-1486406146926-c627a92ad1ab",
-  "bldg-03": "photo-1486325212027-8081e485255e",
-  "bldg-04": "photo-1497366216548-37526070297c",
-  "land-01": "photo-1500382017468-9049fed747ef",
-  "land-02": "photo-1469474968028-56623f02e42e",
-  "land-03": "photo-1441974231531-c6227db76b6e",
-  "land-04": "photo-1472214103451-9374bd1c798e",
-  "office-01": "photo-1497366811353-6870744d04b2",
-  "office-02": "photo-1524758631624-e2822e304c36",
-  "office-03": "photo-1497215728101-856f4ea42174",
-  "shop-01": "photo-1441986300917-64674bd600d8",
-  "shop-02": "photo-1604719312566-8912e9227c6a",
-  "farm-01": "photo-1464226184884-fa280b87cba5",
-  "farm-02": "photo-1500534314209-a25ddb2bd429",
-  "palace-01": "photo-1605276374104-dee2a0ed3cd6",
-  "palace-02": "photo-1600585152220-90363fe30d40",
-  "wh-02": "photo-1586528116311-ad8dd3d8d0e0",
-};
-
-const photo = (name: string) => U(SHOTS[name] ?? "photo-1613490493576-7fde63acd811");
+const photo = (name: string) => `/demo-properties/${name}.jpg`;
 
 export const DEMO_GALLERY = [
   photo("villa-01"),
