@@ -1,16 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import villa1 from "@/assets/property-villa1.jpg";
-import villa2 from "@/assets/property-villa2.jpg";
-import land1 from "@/assets/property-land1.jpg";
-import apartment1 from "@/assets/property-apartment1.jpg";
-import interior1 from "@/assets/property-interior1.jpg";
-import type { Property } from "@/data/properties";
+import {
+  DEMO_GALLERY,
+  properties as fallbackProperties,
+  type Property,
+} from "@/data/properties";
 import type { ProductType, Usage } from "@/data/catalog";
 
 export const DEFAULT_WHATSAPP = "966500000000";
 
-export const fallbackGallery = [villa1, villa2, interior1, apartment1, land1];
+export const fallbackGallery = DEMO_GALLERY;
 
 export interface SiteSettings {
   hero_image: string | null;
@@ -99,12 +98,19 @@ export function useProperties() {
   return useQuery({
     queryKey: ["properties"],
     queryFn: async (): Promise<Property[]> => {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .order("sort", { ascending: true });
-      if (error) throw error;
-      return (data ?? []).map(mapProperty);
+      try {
+        const { data, error } = await supabase
+          .from("properties")
+          .select("*")
+          .order("sort", { ascending: true });
+        if (error) throw error;
+        const mapped = (data ?? []).map(mapProperty);
+        if (mapped.length >= 8) return mapped;
+        const refs = new Set(mapped.map((p) => p.ref));
+        return [...mapped, ...fallbackProperties.filter((p) => !refs.has(p.ref))];
+      } catch {
+        return fallbackProperties;
+      }
     },
     staleTime: 30_000,
   });
@@ -114,8 +120,13 @@ export function useProperty(id: string) {
   return useQuery({
     queryKey: ["property", id],
     queryFn: async (): Promise<Property | null> => {
-      const { data } = await supabase.from("properties").select("*").eq("id", id).maybeSingle();
-      return data ? mapProperty(data) : null;
+      try {
+        const { data } = await supabase.from("properties").select("*").eq("id", id).maybeSingle();
+        if (data) return mapProperty(data);
+      } catch {
+        /* demo catalog */
+      }
+      return fallbackProperties.find((p) => p.id === id) ?? null;
     },
   });
 }

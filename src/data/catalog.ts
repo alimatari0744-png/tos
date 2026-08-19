@@ -15,8 +15,8 @@ export interface Bilingual {
 }
 
 export const desireLabels: Record<Desire, Bilingual> = {
-  sale: { ar: "للبيع", en: "For Sale" },
-  rent: { ar: "للإيجار", en: "For Rent" },
+  sale: { ar: "بيع / شراء", en: "Sale / Buy" },
+  rent: { ar: "إيجار", en: "Rent" },
 };
 
 export const usageLabels: Record<Usage, Bilingual> = {

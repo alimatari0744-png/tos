@@ -43,7 +43,14 @@ export const translations: Dict = {
 
   // properties
   "properties.title": { ar: "العروض العقارية", en: "Property Offers" },
-  "properties.subtitle": { ar: "اكتشف العقارات المتاحة الآن", en: "Discover available properties now" },
+  "properties.subtitle": {
+    ar: "نماذج للمعاينة — عقارات للبيع والشراء والإيجار مع صور في عدة مدن سعودية.",
+    en: "Preview samples — properties for sale, purchase and rent with photos across Saudi cities.",
+  },
+  "properties.demoBanner": {
+    ar: "نماذج للمعاينة — أمثلة جاهزة لعروض البيع والشراء والإيجار بالصور، ليتعرّف زائر المنصة على طبيعة المنتج.",
+    en: "Preview models — ready examples of sale, purchase and rental listings with photos, so visitors can see how the product works.",
+  },
   "properties.available": { ar: "متاحة", en: "Available" },
   "properties.sold": { ar: "مباعة", en: "Sold" },
   "properties.soldStamp": { ar: "تم البيع", en: "SOLD" },

@@ -7,6 +7,7 @@ import {
   propertyTitle,
   propertyLocation,
 } from "@/data/properties";
+import { desireLabels } from "@/data/catalog";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export function PropertyCard({ property }: { property: Property }) {
@@ -104,6 +105,9 @@ export function PropertyCard({ property }: { property: Property }) {
               </div>
             </>
           )}
+          <span className="absolute start-3 top-3 z-10 rounded-full bg-background/90 px-3 py-1 text-xs font-bold text-foreground shadow-card">
+            {desireLabels[property.desire][lang]}
+          </span>
           <span
             className={`absolute end-3 top-3 z-10 rounded-full px-3 py-1 text-xs font-bold text-primary-foreground ${
               isSold ? "bg-destructive" : "bg-emerald-600"

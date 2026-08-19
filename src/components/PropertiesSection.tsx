@@ -33,6 +33,9 @@ export function PropertiesSection({
           {t("properties.title")}
         </h2>
         <p className="mt-2 text-muted-foreground">{t("properties.subtitle")}</p>
+        <p className="mt-3 max-w-3xl rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm leading-relaxed text-foreground/80">
+          {t("properties.demoBanner")}
+        </p>
       </div>
 
       {/* Category chips — scrollbar fully hidden, drag/scroll still works */}
