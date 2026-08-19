@@ -7,8 +7,8 @@ import { useSettings } from "@/lib/site-data";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "سياسة الخصوصية | ثقة وإعمار" },
-      { name: "description", content: "سياسة الخصوصية لموقع ثقة وإعمار للخدمات العقارية." },
+      { title: "سياسة الخصوصية | منصة العقارات" },
+      { name: "description", content: "سياسة الخصوصية لموقع منصة العقارات." },
     ],
   }),
   component: PrivacyPage,

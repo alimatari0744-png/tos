@@ -12,13 +12,13 @@ import { applyFilters, defaultFilters, type Filters } from "@/lib/filters";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ثقة وإعمار للخدمات العقارية | Thiqah Wa Emaar" },
+      { title: "منصة العقارات | Real Estate Platform" },
       {
         name: "description",
         content:
-          "ثقة وإعمار للخدمات العقارية — اكتشف أفضل العروض العقارية في المملكة العربية السعودية من فلل وأراضٍ وشقق ومشاريع استثمارية.",
+          "منصة العقارات — اكتشف أفضل العروض العقارية في المملكة العربية السعودية من فلل وأراضٍ وشقق ومشاريع استثمارية.",
       },
-      { property: "og:title", content: "ثقة وإعمار للخدمات العقارية" },
+      { property: "og:title", content: "منصة العقارات" },
       {
         property: "og:description",
         content: "اكتشف أفضل العروض العقارية في المملكة العربية السعودية.",

@@ -18,7 +18,7 @@ export const translations: Dict = {
   "nav.langToggle": { ar: "English", en: "العربية" },
 
   // hero
-  "hero.badge": { ar: "ثقة وإعمار للخدمات العقارية", en: "Thiqah Wa Emaar Real Estate" },
+  "hero.badge": { ar: "منصة العقارات", en: "Real Estate Platform" },
   "hero.title": { ar: "نبني الثقة، ونُعمّر المستقبل", en: "Building Trust, Developing the Future" },
   "hero.subtitle": {
     ar: "اكتشف أفضل العقارات المتاحة في المملكة العربية السعودية — فلل، أراضٍ، شقق ومشاريع استثمارية مختارة بعناية.",
@@ -148,8 +148,8 @@ export const translations: Dict = {
   "map.viewOffer": { ar: "تفاصيل العرض", en: "View Offer" },
   "map.pageTitle": { ar: "خريطة العروض العقارية", en: "Properties Map" },
   "map.pageSubtitle": {
-    ar: "تصفّح جميع عروض ثقة وإعمار على الخريطة واضغط على أي موقع لعرض تفاصيله.",
-    en: "Browse all Thiqah Wa Emaar offers on the map and click any marker to view its details.",
+    ar: "تصفّح جميع عروض منصة العقارات على الخريطة واضغط على أي موقع لعرض تفاصيله.",
+    en: "Browse all Real Estate Platform offers on the map and click any marker to view its details.",
   },
 
   // whatsapp / footer
