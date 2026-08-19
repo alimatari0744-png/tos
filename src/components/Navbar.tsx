@@ -80,11 +80,11 @@ export function Navbar({ onRequest }: { onRequest: () => void }) {
             {logoUrl ? (
               <img
                 src={logoUrl}
-                alt="ثقة وإعمار للخدمات العقارية"
+                alt="منصة العقارات"
                 className="h-16 w-auto"
               />
             ) : (
-              <span className="sr-only">ثقة وإعمار</span>
+              <span className="sr-only">منصة العقارات</span>
             )}
           </Link>
         </div>

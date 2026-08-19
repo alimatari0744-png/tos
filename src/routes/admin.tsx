@@ -69,7 +69,7 @@ const PERMISSION_LABELS: Record<string, string> = {
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  head: () => ({ meta: [{ title: "لوحة التحكم | ثقة وإعمار" }] }),
+  head: () => ({ meta: [{ title: "لوحة التحكم | منصة العقارات" }] }),
   component: AdminPage,
 });
 
@@ -293,7 +293,7 @@ function AdminPage() {
     <div className="min-h-screen bg-background" dir="rtl">
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-          <h1 className="text-xl font-black text-foreground">لوحة تحكم ثقة وإعمار</h1>
+          <h1 className="text-xl font-black text-foreground">لوحة تحكم منصة العقارات</h1>
           <div className="flex items-center gap-2">
             <a href="/" className={btnGhost}>عرض الموقع</a>
             <button onClick={handleLogout} className={btnGhost}>خروج</button>
@@ -605,8 +605,8 @@ function SettingsTab() {
           <h2 className="mb-1 text-lg font-black text-foreground">نص حقوق النشر (أسفل الموقع)</h2>
           <p className="text-xs text-muted-foreground">يظهر في تذييل الموقع. اتركه فارغًا لإخفائه.</p>
         </div>
-        <div><label className={labelCls}>النص (عربي)</label><input className={inputCls} value={form.footer_text_ar ?? ""} placeholder="© 2026 ثقة وإعمار. جميع الحقوق محفوظة." onChange={(e) => set("footer_text_ar", e.target.value)} /></div>
-        <div><label className={labelCls}>النص (إنجليزي)</label><input className={inputCls} dir="ltr" value={form.footer_text_en ?? ""} placeholder="© 2026 Thiqah Wa Emaar. All rights reserved." onChange={(e) => set("footer_text_en", e.target.value)} /></div>
+        <div><label className={labelCls}>النص (عربي)</label><input className={inputCls} value={form.footer_text_ar ?? ""} placeholder="© 2026 منصة العقارات. جميع الحقوق محفوظة." onChange={(e) => set("footer_text_ar", e.target.value)} /></div>
+        <div><label className={labelCls}>النص (إنجليزي)</label><input className={inputCls} dir="ltr" value={form.footer_text_en ?? ""} placeholder="© 2026 Real Estate Platform. All rights reserved." onChange={(e) => set("footer_text_en", e.target.value)} /></div>
       </section>
 
       <section className="space-y-4 rounded-2xl border border-border bg-card p-5">
