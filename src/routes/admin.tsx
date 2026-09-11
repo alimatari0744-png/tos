@@ -106,6 +106,17 @@ const btnPrimary =
 const btnGhost =
   "rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary";
 
+const isStaticHost = !import.meta.env.DEV;
+
+function StaticHostNote() {
+  if (!isStaticHost) return null;
+  return (
+    <p className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-center text-sm font-semibold leading-relaxed text-foreground">
+      رابط GitHub Pages ثابت: الدخول يعمل هنا، لكن أي تعديل يُحفظ في هذا المتصفح فقط ولن يظهر للزوار. لإظهار التغييرات على الموقع استخدم النسخة المحلية ثم انشر.
+    </p>
+  );
+}
+
 /* Styled file-picker button (with background) */
 function FileButton({
   onPick,
@@ -216,6 +227,7 @@ function AdminPage() {
         >
           <h1 className="text-center text-2xl font-black text-foreground">لوحة التحكم</h1>
           <p className="text-center text-sm text-muted-foreground">تسجيل دخول المسؤول</p>
+          <StaticHostNote />
           <div>
             <label className={labelCls}>البريد الإلكتروني</label>
             <input
@@ -270,6 +282,10 @@ function AdminPage() {
           </div>
         </div>
       </header>
+
+      <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+        <StaticHostNote />
+      </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row">
         {/* Right-side navigation (RTL: first in DOM = right) */}

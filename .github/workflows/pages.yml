@@ -41,6 +41,11 @@ jobs:
             echo "Build output not found" && ls -la && exit 1
           fi
           cp "$OUT/index.html" "$OUT/404.html"
+          mkdir -p "$OUT/admin" "$OUT/map" "$OUT/privacy" "$OUT/terms"
+          cp "$OUT/index.html" "$OUT/admin/index.html"
+          cp "$OUT/index.html" "$OUT/map/index.html"
+          cp "$OUT/index.html" "$OUT/privacy/index.html"
+          cp "$OUT/index.html" "$OUT/terms/index.html"
           touch "$OUT/.nojekyll"
           echo "OUT=$OUT" >> "$GITHUB_ENV"
       - uses: actions/upload-pages-artifact@v3
