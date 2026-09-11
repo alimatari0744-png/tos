@@ -1,4 +1,4 @@
-import { loginAccount } from "@/lib/store.functions";
+import { loginAccount } from "@/lib/store";
 
 const SESSION_KEY = "tawoos-admin-session";
 

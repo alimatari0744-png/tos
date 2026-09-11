@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { localDb } from "@/lib/local-db";
+import { publicUrl } from "@/lib/public-url";
 import { correctBrandName } from "@/lib/utils";
 import {
   DEMO_GALLERY,
@@ -66,9 +67,15 @@ function resolveMedia(row: {
   const rawImages = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
   const rawImage = row.image || rawImages[0];
   if (!isBrokenImageUrl(rawImage) && rawImages.every((u) => !isBrokenImageUrl(u))) {
-    return { image: rawImage as string, images: rawImages.length ? rawImages : undefined };
+    return {
+      image: publicUrl(rawImage as string),
+      images: rawImages.length ? rawImages.map((u) => publicUrl(u)) : undefined,
+    };
   }
-  return local;
+  return {
+    image: publicUrl(local.image),
+    images: local.images?.map((u) => publicUrl(u)),
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

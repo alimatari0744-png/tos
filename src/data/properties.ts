@@ -1,3 +1,4 @@
+import { publicUrl } from "@/lib/public-url";
 import {
   type Desire,
   type Usage,
@@ -36,7 +37,7 @@ export interface Property {
   lng?: number;
 }
 
-const photo = (name: string) => `/demo-properties/${name}.jpg`;
+const photo = (name: string) => publicUrl(`/demo-properties/${name}.jpg`);
 
 export const DEMO_GALLERY = [
   photo("villa-01"),

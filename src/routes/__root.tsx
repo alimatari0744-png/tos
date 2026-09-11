@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { publicUrl } from "../lib/public-url";
 import { LanguageProvider } from "../i18n/LanguageContext";
 import { Toaster } from "../components/ui/sonner";
 import { ThemeApplier } from "../components/ThemeApplier";
@@ -64,7 +65,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             Try again
           </button>
           <a
-            href="/"
+            href={publicUrl("/")}
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
             Go home
@@ -89,16 +90,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "مكتب طوس العقارية" },
       { name: "twitter:description", content: "مكتب طوس العقارية — منصة للعروض والاستفسارات العقارية في المملكة العربية السعودية." },
-      { property: "og:image", content: "/brand/logo.png?v=8" },
-      { name: "twitter:image", content: "/brand/logo.png?v=8" },
+      { property: "og:image", content: publicUrl("/brand/logo.png?v=8") },
+      { name: "twitter:image", content: publicUrl("/brand/logo.png?v=8") },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/brand/logo-mark.png?v=8", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/brand/logo-mark.png?v=8" },
+      { rel: "icon", href: publicUrl("/brand/logo-mark.png?v=8"), type: "image/png" },
+      { rel: "apple-touch-icon", href: publicUrl("/brand/logo-mark.png?v=8") },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

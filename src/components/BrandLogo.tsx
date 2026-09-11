@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-const LOGO_SRC = "/brand/logo.png?v=8";
+import { publicUrl } from "@/lib/public-url";
+
+const LOGO_SRC = publicUrl("/brand/logo.png?v=8");
 
 export function LogoMark({ className = "h-10 w-10" }: { className?: string }) {
   return (

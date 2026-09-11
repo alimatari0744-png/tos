@@ -5,7 +5,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { localDb } from "@/lib/local-db";
 import { getSessionUser, signIn, signOut, onAuthChange } from "@/lib/local-auth";
-import { uploadMedia } from "@/lib/store.functions";
+import { uploadMedia } from "@/lib/store";
+import { publicUrl } from "@/lib/public-url";
 import {
   listStaff,
   createStaff,
@@ -88,7 +89,7 @@ async function uploadImage(folder: string, file: File): Promise<string | null> {
       reader.readAsDataURL(file);
     });
     const { url } = await uploadMedia({
-      data: { folder, name: file.name, bytes },
+      data: { folder, name: file.name, bytes, type: file.type },
     });
     return url;
   } catch {
@@ -264,7 +265,7 @@ function AdminPage() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
           <h1 className="text-xl font-black text-foreground">لوحة التحكم</h1>
           <div className="flex items-center gap-2">
-            <a href="/" className={btnGhost}>الموقع</a>
+            <a href={publicUrl("/")} className={btnGhost}>الموقع</a>
             <button onClick={handleLogout} className={btnGhost}>خروج</button>
           </div>
         </div>
@@ -534,11 +535,11 @@ function SettingsTab() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-border bg-background p-4">
             <p className="mb-3 text-xs font-bold text-muted-foreground">مختصر (موبايل / أيقونة)</p>
-            <img src="/brand/logo-mark.png?v=8" alt="شعار مكتب طوس العقارية المختصر" className="h-16 w-16 object-contain" />
+            <img src={publicUrl("/brand/logo-mark.png?v=8")} alt="شعار مكتب طوس العقارية المختصر" className="h-16 w-16 object-contain" />
           </div>
           <div className="rounded-xl border border-border bg-background p-4">
             <p className="mb-3 text-xs font-bold text-muted-foreground">مطوّل (بريد / سطح المكتب)</p>
-            <img src="/brand/logo-email.png?v=8" alt="مكتب طوس العقارية" className="h-16 w-auto max-w-full object-contain" />
+            <img src={publicUrl("/brand/logo-email.png?v=8")} alt="مكتب طوس العقارية" className="h-16 w-auto max-w-full object-contain" />
           </div>
         </div>
       </section>

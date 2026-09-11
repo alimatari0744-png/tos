@@ -36,7 +36,7 @@ export async function readStore(): Promise<AppStore> {
   return JSON.parse(raw) as AppStore;
 }
 
-export async function writeStore(store: AppStore): Promise<void> {
+export async function writeStore(store: AppStore | Record<string, unknown>): Promise<void> {
   await mkdir(path.dirname(DB_PATH), { recursive: true });
   await writeFile(DB_PATH, JSON.stringify(store, null, 2), "utf8");
 }

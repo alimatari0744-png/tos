@@ -1,4 +1,4 @@
-import { getStore, mutateStore } from "@/lib/store.functions";
+import { getStore, mutateStore } from "@/lib/store";
 
 type Filter = { col: string; val: unknown };
 

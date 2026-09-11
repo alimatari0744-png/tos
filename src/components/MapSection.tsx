@@ -6,6 +6,7 @@ import {
   propertyLocation,
   type Property,
 } from "@/data/properties";
+import { publicUrl } from "@/lib/public-url";
 import { getCity } from "@/data/catalog";
 
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
@@ -110,7 +111,7 @@ export function MapSection({
           <span style="color:#c2410c;font-weight:700">${formatPrice(p.price)} ${
             lang === "ar" ? "ر.س" : "SAR"
           }</span><br/>
-          <a href="/properties/${p.id}" style="display:inline-block;margin-top:8px;background:#ea7317;color:#fff;padding:6px 14px;border-radius:9999px;font-weight:700;text-decoration:none;font-size:13px">${viewLabel}</a>
+          <a href="${publicUrl(`/properties/${p.id}`)}" style="display:inline-block;margin-top:8px;background:#ea7317;color:#fff;padding:6px 14px;border-radius:9999px;font-weight:700;text-decoration:none;font-size:13px">${viewLabel}</a>
         </div>`,
       );
       markersRef.current.push(marker);

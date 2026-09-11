@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { getStoreSync, mutateStore } from "@/lib/store";
 
 export const ALL_PERMISSIONS = [
   "properties",
@@ -17,79 +17,79 @@ export interface StaffMember {
   permissions: string[];
 }
 
-export const listStaff = createServerFn({ method: "GET" }).handler(async (): Promise<StaffMember[]> => {
-  const { readStore } = await import("./store.server");
-  const store = await readStore();
-  return store.accounts
+export async function listStaff(): Promise<StaffMember[]> {
+  const store = getStoreSync();
+  const accounts = (store.accounts as Array<StaffMember & { role?: string }>) ?? [];
+  return accounts
     .filter((a) => a.role === "staff")
     .map((a) => ({
       id: a.id,
       email: a.email,
-      name: a.name,
-      permissions: a.permissions,
+      name: a.name ?? "",
+      permissions: a.permissions ?? [],
     }));
-});
+}
 
-export const createStaff = createServerFn({ method: "POST" })
-  .inputValidator(
-    (data: {
-      email: string;
-      name: string;
-      password: string;
-      permissions: string[];
-    }) => data,
-  )
-  .handler(async ({ data }) => {
-    const { readStore, writeStore } = await import("./store.server");
-    const email = data.email.trim().toLowerCase();
-    const name = data.name.trim();
-    const permissions = (data.permissions ?? []).filter((p) =>
-      (ALL_PERMISSIONS as readonly string[]).includes(p),
-    );
-
-    if (!email || !data.password || data.password.length < 6) {
-      throw new Error("بيانات غير صحيحة");
-    }
-
-    const store = await readStore();
-    if (store.accounts.some((a) => a.email.toLowerCase() === email)) {
-      throw new Error("البريد مستخدم مسبقاً");
-    }
-
-    const id = crypto.randomUUID();
-    store.accounts.push({
-      id,
-      email,
-      password: data.password,
-      name,
-      role: "staff",
-      permissions,
-    });
-    await writeStore(store);
-    return { ok: true, id };
+export async function createStaff(input: {
+  data: { email: string; name: string; password: string; permissions: string[] };
+}) {
+  const email = input.data.email.trim().toLowerCase();
+  const name = input.data.name.trim();
+  const permissions = (input.data.permissions ?? []).filter((p) =>
+    (ALL_PERMISSIONS as readonly string[]).includes(p),
+  );
+  if (!email || !input.data.password || input.data.password.length < 6) {
+    throw new Error("بيانات غير صحيحة");
+  }
+  const store = getStoreSync();
+  const accounts = (store.accounts as { email: string }[]) ?? [];
+  if (accounts.some((a) => a.email.toLowerCase() === email)) {
+    throw new Error("البريد مستخدم مسبقاً");
+  }
+  await mutateStore({
+    data: {
+      op: "insert",
+      table: "accounts",
+      rows: [
+        {
+          id: crypto.randomUUID(),
+          email,
+          password: input.data.password,
+          name,
+          role: "staff",
+          permissions,
+        },
+      ],
+    },
   });
+  return { ok: true };
+}
 
-export const updateStaffPermissions = createServerFn({ method: "POST" })
-  .inputValidator((data: { userId: string; permissions: string[] }) => data)
-  .handler(async ({ data }) => {
-    const { readStore, writeStore } = await import("./store.server");
-    const permissions = (data.permissions ?? []).filter((p) =>
-      (ALL_PERMISSIONS as readonly string[]).includes(p),
-    );
-    const store = await readStore();
-    store.accounts = store.accounts.map((a) =>
-      a.id === data.userId ? { ...a, permissions } : a,
-    );
-    await writeStore(store);
-    return { ok: true };
+export async function updateStaffPermissions(input: {
+  data: { userId: string; permissions: string[] };
+}) {
+  const permissions = (input.data.permissions ?? []).filter((p) =>
+    (ALL_PERMISSIONS as readonly string[]).includes(p),
+  );
+  await mutateStore({
+    data: {
+      op: "update",
+      table: "accounts",
+      match: { id: input.data.userId },
+      patch: { permissions },
+    },
   });
+  return { ok: true };
+}
 
-export const deleteStaff = createServerFn({ method: "POST" })
-  .inputValidator((data: { userId: string }) => data)
-  .handler(async ({ data }) => {
-    const { readStore, writeStore } = await import("./store.server");
-    const store = await readStore();
-    store.accounts = store.accounts.filter((a) => a.id !== data.userId || a.role === "admin");
-    await writeStore(store);
-    return { ok: true };
+export async function deleteStaff(input: { data: { userId: string } }) {
+  const store = getStoreSync();
+  const acc = ((store.accounts as { id: string; role?: string }[]) ?? []).find(
+    (a) => a.id === input.data.userId,
+  );
+  if (acc?.role === "admin") return { ok: true };
+  await mutateStore({
+    data: { op: "delete", table: "accounts", match: { id: input.data.userId } },
   });
+  return { ok: true };
+}
