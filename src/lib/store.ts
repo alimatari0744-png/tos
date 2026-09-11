@@ -1,44 +1,91 @@
 import seed from "../../data/db.json";
 
-const STORAGE_KEY = "tawoos-db-v2";
-
 export type JsonRecord = Record<string, any>;
+
+const SAVE_PATH = "/__tawoos/db";
+const LOCAL_SAVE_URLS = [
+  "http://127.0.0.1:8080/__tawoos/db",
+  "http://localhost:8080/__tawoos/db",
+];
 
 function cloneSeed() {
   return JSON.parse(JSON.stringify(seed)) as Record<string, any>;
 }
 
-function readLocal(): Record<string, any> | null {
-  if (typeof window === "undefined") return null;
+function clearBrowserCopy() {
+  if (typeof window === "undefined") return;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, any>) : null;
+    localStorage.removeItem("tawoos-db-v1");
+    localStorage.removeItem("tawoos-db-v2");
   } catch {
-    return null;
+    /* ignore */
   }
 }
 
 let cache: Record<string, any> | null = null;
 
 export function getStoreSync(): Record<string, any> {
-  if (!cache) cache = readLocal() ?? cloneSeed();
+  if (!cache) {
+    clearBrowserCopy();
+    cache = cloneSeed();
+  }
   return cache;
 }
 
 export async function getStore(): Promise<Record<string, any>> {
+  if (typeof window !== "undefined" && import.meta.env.DEV) {
+    try {
+      const res = await fetch(SAVE_PATH, { method: "GET" });
+      if (res.ok) {
+        const data = (await res.json()) as Record<string, any>;
+        if (data && typeof data === "object") {
+          cache = data;
+          return cache;
+        }
+      }
+    } catch {
+      /* bundled seed */
+    }
+  }
   return getStoreSync();
 }
 
-function persist(store: Record<string, any>) {
+async function postStore(url: string, store: Record<string, any>) {
+  const ctrl = new AbortController();
+  const timer = window.setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(store),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) throw new Error(`save failed (${res.status})`);
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
+async function persistStore(store: Record<string, any>) {
   cache = store;
-  if (typeof window !== "undefined") {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  clearBrowserCopy();
+  if (typeof window === "undefined") return;
+
+  const urls = import.meta.env.DEV ? [SAVE_PATH] : LOCAL_SAVE_URLS;
+  let lastError: unknown;
+  for (const url of urls) {
+    try {
+      await postStore(url, store);
+      return;
+    } catch (error) {
+      lastError = error;
+    }
   }
-  if (import.meta.env.DEV) {
-    void import("./store.functions")
-      .then((m) => m.syncStoreToDisk({ data: store }))
-      .catch(() => {});
-  }
+  throw new Error(
+    lastError instanceof Error
+      ? "تعذّر حفظ البيانات في ملفات المشروع. شغّل الموقع المحلي ثم أعد الحفظ."
+      : "تعذّر حفظ البيانات في ملفات المشروع.",
+  );
 }
 
 function matches(row: JsonRecord, match: Record<string, unknown>) {
@@ -71,12 +118,12 @@ export async function mutateStore(input: { data: MutateOp }) {
     store[op.table] = rows.filter((row) => !matches(row, op.match));
   }
 
-  persist(store);
+  await persistStore(store);
   return { ok: true as const };
 }
 
 export async function loginAccount(input: { data: { email: string; password: string } }) {
-  const store = getStoreSync();
+  const store = await getStore();
   const email = input.data.email.trim().toLowerCase();
   const account = (store.accounts as JsonRecord[] | undefined)?.find(
     (a) => String(a.email).toLowerCase() === email && a.password === input.data.password,

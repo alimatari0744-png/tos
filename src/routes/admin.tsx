@@ -106,17 +106,6 @@ const btnPrimary =
 const btnGhost =
   "rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary";
 
-const isStaticHost = !import.meta.env.DEV;
-
-function StaticHostNote() {
-  if (!isStaticHost) return null;
-  return (
-    <p className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-center text-sm font-semibold leading-relaxed text-foreground">
-      رابط GitHub Pages ثابت: الدخول يعمل هنا، لكن أي تعديل يُحفظ في هذا المتصفح فقط ولن يظهر للزوار. لإظهار التغييرات على الموقع استخدم النسخة المحلية ثم انشر.
-    </p>
-  );
-}
-
 /* Styled file-picker button (with background) */
 function FileButton({
   onPick,
@@ -227,7 +216,6 @@ function AdminPage() {
         >
           <h1 className="text-center text-2xl font-black text-foreground">لوحة التحكم</h1>
           <p className="text-center text-sm text-muted-foreground">تسجيل دخول المسؤول</p>
-          <StaticHostNote />
           <div>
             <label className={labelCls}>البريد الإلكتروني</label>
             <input
@@ -282,10 +270,6 @@ function AdminPage() {
           </div>
         </div>
       </header>
-
-      <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
-        <StaticHostNote />
-      </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row">
         {/* Right-side navigation (RTL: first in DOM = right) */}
@@ -532,8 +516,8 @@ function SettingsTab() {
     const changes = diffChanges(data ?? {}, payload, SETTINGS_FIELD_LABELS);
     const { error } = await localDb.from("site_settings").update(payload).eq("id", true);
     setSaving(false);
-    if (error) return toast.error("تعذّر الحفظ");
-    toast.success("تم الحفظ");
+    if (error) return toast.error(error.message || "تعذّر الحفظ");
+    toast.success("تم الحفظ في ملفات المشروع");
     void logActivity({ action: "update", entity: "settings", entityLabel: "الإعدادات العامة", changes });
     qc.invalidateQueries({ queryKey: ["site_settings"] });
     qc.invalidateQueries({ queryKey: ["admin_settings"] });
@@ -1176,7 +1160,7 @@ function PropertyForm({
       ? await localDb.from("properties").update(payload).eq("id", f.id)
       : await localDb.from("properties").insert(payload);
     setSaving(false);
-    if (res.error) return toast.error("تعذّر الحفظ");
+    if (res.error) return toast.error(res.error.message || "تعذّر الحفظ");
     const changes = diffChanges(
       f.id ? (initial as unknown as Record<string, unknown>) : {},
       f as unknown as Record<string, unknown>,
@@ -1189,7 +1173,7 @@ function PropertyForm({
       changes,
     });
     clearDraftStorage();
-    toast.success("تم الحفظ");
+    toast.success("تم الحفظ في ملفات المشروع");
     onDone();
   }
 
