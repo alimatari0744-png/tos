@@ -18,66 +18,10 @@ export function Navbar({ onRequest }: { onRequest: () => void }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-        {/* Right (in RTL): mobile menu button + logo */}
-        <div className="flex min-w-0 items-center gap-2">
-          {/* Mobile menu trigger — on the right */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <button
-                className="inline-flex items-center justify-center rounded-md border border-border p-2 text-foreground md:hidden"
-                aria-label="القائمة"
-              >
-                <Menu className="h-5 w-5" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-64 sm:w-72">
-              <SheetHeader className="space-y-3 pt-6 text-start">
-                <SheetTitle className="sr-only">القائمة</SheetTitle>
-                <BrandLogo variant="wide" onClick={() => setOpen(false)} />
-              </SheetHeader>
-              <nav className="mt-6 flex flex-col gap-2">
-                <SheetClose asChild>
-                  <Link
-                    to="/"
-                    className="rounded-lg px-4 py-3 text-base font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-primary"
-                  >
-                    {t("nav.home")}
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    to="/map"
-                    className="rounded-lg px-4 py-3 text-base font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-primary"
-                  >
-                    {t("nav.map")}
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    to="/"
-                    hash="properties"
-                    className="rounded-lg px-4 py-3 text-base font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-primary"
-                  >
-                    {t("nav.properties")}
-                  </Link>
-                </SheetClose>
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    onRequest();
-                  }}
-                  className="gradient-primary mt-2 rounded-full px-5 py-3 text-base font-bold text-primary-foreground shadow-card"
-                >
-                  {t("nav.requestCta")}
-                </button>
-              </nav>
-            </SheetContent>
-          </Sheet>
-
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 overflow-visible px-4 sm:px-6">
+        <div className="flex min-w-0 items-center">
           <BrandLogo variant="auto" />
         </div>
-
 
         {/* Center: nav links (desktop) */}
         <nav className="hidden items-center gap-7 md:flex">
@@ -88,17 +32,17 @@ export function Navbar({ onRequest }: { onRequest: () => void }) {
             {t("nav.home")}
           </Link>
           <Link
-            to="/map"
-            className="text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
-          >
-            {t("nav.map")}
-          </Link>
-          <Link
             to="/"
             hash="properties"
             className="text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
           >
             {t("nav.properties")}
+          </Link>
+          <Link
+            to="/map"
+            className="text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
+          >
+            {t("nav.map")}
           </Link>
           <button
             onClick={onRequest}
@@ -108,9 +52,61 @@ export function Navbar({ onRequest }: { onRequest: () => void }) {
           </button>
         </nav>
 
-        {/* Left (in RTL): language toggle */}
-        <LanguageButton />
-
+        <div className="flex items-center gap-2">
+          <LanguageButton />
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button
+                className="inline-flex items-center justify-center rounded-md border border-border p-2 text-foreground md:hidden"
+                aria-label="القائمة"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex w-64 flex-col items-center sm:w-72">
+              <SheetHeader className="w-full items-center space-y-3 pt-8 text-center">
+                <SheetTitle className="sr-only">القائمة</SheetTitle>
+                <BrandLogo variant="wide" className="justify-center" onClick={() => setOpen(false)} />
+              </SheetHeader>
+              <nav className="mt-8 flex w-full flex-col items-center gap-1">
+                <SheetClose asChild>
+                  <Link
+                    to="/"
+                    className="w-full rounded-lg px-4 py-3 text-center text-base font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-primary"
+                  >
+                    {t("nav.home")}
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    to="/"
+                    hash="properties"
+                    className="w-full rounded-lg px-4 py-3 text-center text-base font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-primary"
+                  >
+                    {t("nav.properties")}
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    to="/map"
+                    className="w-full rounded-lg px-4 py-3 text-center text-base font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-primary"
+                  >
+                    {t("nav.map")}
+                  </Link>
+                </SheetClose>
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    onRequest();
+                  }}
+                  className="gradient-primary mt-4 w-full rounded-full px-5 py-3 text-center text-base font-bold text-primary-foreground shadow-card"
+                >
+                  {t("nav.requestCta")}
+                </button>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );

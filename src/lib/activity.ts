@@ -1,4 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
+import { localDb } from "@/lib/local-db";
+import { getSessionUser } from "@/lib/local-auth";
 
 export type FieldChange = { label: string; from: string; to: string };
 
@@ -58,11 +59,10 @@ export async function logActivity(input: {
   note?: string;
 }) {
   try {
-    const { data } = await supabase.auth.getUser();
-    const user = data.user;
+    const user = getSessionUser();
     if (!user) return;
     const hasDetails = (input.changes && input.changes.length > 0) || !!input.note;
-    await supabase.from("activity_log").insert({
+    await localDb.from("activity_log").insert({
       user_id: user.id,
       actor_email: user.email ?? null,
       action: input.action,

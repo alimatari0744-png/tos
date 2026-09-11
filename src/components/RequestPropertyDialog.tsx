@@ -74,8 +74,8 @@ export function RequestPropertyDialog({
     setTouched(true);
     if (!canSubmit) return;
 
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { error } = await supabase.from("property_requests").insert({
+    const { localDb } = await import("@/lib/local-db");
+    const { error } = await localDb.from("property_requests").insert({
       name: form.name.trim(),
       phone: `+966${form.phone}`,
       budget: form.budget,

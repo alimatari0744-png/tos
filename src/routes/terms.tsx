@@ -7,8 +7,8 @@ import { useSettings } from "@/lib/site-data";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "شروط الاستخدام | ثقة الإعمار" },
-      { name: "description", content: "شروط استخدام موقع ثقة الإعمار للخدمات العقارية." },
+      { title: "شروط الاستخدام | مكتب طوس العقارية" },
+      { name: "description", content: "شروط استخدام موقع مكتب طوس العقارية." },
     ],
   }),
   component: TermsPage,

@@ -10,7 +10,11 @@ export function Footer() {
   const phone = settings?.contact_phone?.trim();
   const email = settings?.contact_email?.trim();
   const wa = whatsappNumber(settings);
-  const footerText = (lang === "ar" ? settings?.footer_text_ar : settings?.footer_text_en)?.trim();
+  const footerText =
+    (lang === "ar" ? settings?.footer_text_ar : settings?.footer_text_en)?.trim() ||
+    (lang === "ar"
+      ? "© 2026 مكتب طوس العقارية. جميع الحقوق محفوظة."
+      : "© 2026 Tawoos Real Estate Office. All rights reserved.");
 
   return (
     <footer className="border-t border-border bg-secondary/30">

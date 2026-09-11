@@ -13,16 +13,16 @@ import { applyFilters, defaultFilters, type Filters } from "@/lib/filters";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "الخريطة العقارية | ثقة الإعمار" },
+      { title: "الخريطة العقارية | مكتب طوس العقارية" },
       {
         name: "description",
         content:
-          "خريطة عروض ثقة الإعمار العقارية — تصفح مواقع العقارات المتاحة في المملكة العربية السعودية.",
+          "خريطة عروض مكتب طوس العقارية — تصفح مواقع العقارات المتاحة في المملكة العربية السعودية.",
       },
-      { property: "og:title", content: "الخريطة العقارية | ثقة الإعمار" },
+      { property: "og:title", content: "الخريطة العقارية | مكتب طوس العقارية" },
       {
         property: "og:description",
-        content: "تصفح مواقع عروض ثقة الإعمار العقارية على الخريطة.",
+        content: "تصفح مواقع عروض مكتب طوس العقارية على الخريطة.",
       },
     ],
   }),

@@ -13,13 +13,13 @@ import { applyFilters, defaultFilters, type Filters } from "@/lib/filters";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ثقة الإعمار للخدمات العقارية | Thiqah Al-Emaar" },
+      { title: "مكتب طوس العقارية | Tawoos Real Estate Office" },
       {
         name: "description",
         content:
-          "ثقة الإعمار للخدمات العقارية — اكتشف أفضل العروض العقارية في المملكة العربية السعودية من فلل وأراضٍ وشقق ومشاريع استثمارية.",
+          "مكتب طوس العقارية — اكتشف أفضل العروض العقارية في المملكة العربية السعودية من فلل وأراضٍ وشقق ومشاريع استثمارية.",
       },
-      { property: "og:title", content: "ثقة الإعمار للخدمات العقارية" },
+      { property: "og:title", content: "مكتب طوس العقارية" },
       {
         property: "og:description",
         content: "اكتشف أفضل العروض العقارية في المملكة العربية السعودية.",

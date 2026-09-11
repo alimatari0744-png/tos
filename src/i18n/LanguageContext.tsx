@@ -18,8 +18,8 @@ export const translations: Dict = {
   "nav.langToggle": { ar: "English", en: "العربية" },
 
   // hero
-  "hero.badge": { ar: "ثقة الإعمار للخدمات العقارية", en: "Thiqah Al-Emaar Real Estate" },
-  "hero.title": { ar: "نبني الثقة، ونُعمّر المستقبل", en: "Building Trust, Developing the Future" },
+  "hero.badge": { ar: "مكتب طوس العقارية", en: "Tawoos Real Estate Office" },
+  "hero.title": { ar: "وجهتك الموثوقة للعقارات", en: "Your trusted destination for real estate" },
   "hero.subtitle": {
     ar: "اكتشف أفضل العقارات المتاحة في المملكة العربية السعودية — فلل، أراضٍ، شقق ومشاريع استثمارية مختارة بعناية.",
     en: "Discover the finest properties across Saudi Arabia — villas, land, apartments and carefully curated investment projects.",
@@ -152,8 +152,8 @@ export const translations: Dict = {
   "map.viewOffer": { ar: "تفاصيل العرض", en: "View Offer" },
   "map.pageTitle": { ar: "خريطة العروض العقارية", en: "Properties Map" },
   "map.pageSubtitle": {
-    ar: "تصفّح جميع عروض ثقة الإعمار على الخريطة واضغط على أي موقع لعرض تفاصيله.",
-    en: "Browse all Thiqah Al-Emaar offers on the map and click any marker to view its details.",
+    ar: "تصفّح جميع عروض مكتب طوس العقارية على الخريطة واضغط على أي موقع لعرض تفاصيله.",
+    en: "Browse all Tawoos Real Estate Office offers on the map and click any marker to view its details.",
   },
 
   // whatsapp / footer
@@ -173,10 +173,10 @@ export const translations: Dict = {
   "tour.lastSlide": { ar: "الشريحة الأخيرة", en: "Last slide" },
   "tour.finishTitle": { ar: "أصبحت جاهزاً", en: "You’re all set" },
   "tour.finishBody": {
-    ar: "هذه آخر شريحة في الجولة. يمكنك الآن تصفح العروض، طلب عقار، أو التواصل مع فريق ثقة الإعمار في أي وقت.",
-    en: "This is the last slide. You can now browse listings, request a property, or contact the Thiqah Al-Emaar team anytime.",
+    ar: "هذه آخر شريحة في الجولة. يمكنك الآن تصفح العروض، طلب عقار، أو التواصل مع فريق مكتب طوس العقارية في أي وقت.",
+    en: "This is the last slide. You can now browse listings, request a property, or contact the Tawoos Real Estate Office team anytime.",
   },
-  "tour.welcomeTitle": { ar: "مرحباً بك في ثقة الإعمار", en: "Welcome to Thiqah Al-Emaar" },
+  "tour.welcomeTitle": { ar: "مرحباً بك في مكتب طوس العقارية", en: "Welcome to Tawoos Real Estate Office" },
   "tour.welcomeBody": {
     ar: "جولة سريعة تعرفك بأهم أجزاء الموقع: البحث، العروض، طلب عقار، والتواصل.",
     en: "A short tour of search, listings, property requests, and contact.",
@@ -198,8 +198,8 @@ export const translations: Dict = {
   },
   "tour.whatsappTitle": { ar: "تواصل فوري", en: "Chat instantly" },
   "tour.whatsappBody": {
-    ar: "زر واتساب للتواصل المباشر مع فريق ثقة الإعمار في أي وقت.",
-    en: "Use WhatsApp to reach the Thiqah Al-Emaar team anytime.",
+    ar: "زر واتساب للتواصل المباشر مع فريق مكتب طوس العقارية في أي وقت.",
+    en: "Use WhatsApp to reach the Tawoos Real Estate Office team anytime.",
   },
 };
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { LogoMark } from "@/components/BrandLogo";
 
-const STORAGE_KEY = "thiqah-tour-seen-v2";
+const STORAGE_KEY = "tawoos-tour-seen-v1";
 
 const STEPS = [
   { id: null, title: "tour.welcomeTitle", body: "tour.welcomeBody" },
@@ -135,7 +135,7 @@ export function AppTour() {
       >
         {last ? (
           <div className="mb-3 flex justify-center">
-            <LogoMark className="h-12 w-12" />
+            <LogoMark className="h-20 w-20" />
           </div>
         ) : null}
         <div className="flex items-center justify-between gap-3">

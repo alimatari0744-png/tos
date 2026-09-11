@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { localDb } from "@/lib/local-db";
 
 /**
  * Records a customer contact/lead in the dashboard.
@@ -13,7 +13,7 @@ export async function recordContact(input: {
   phone?: string | null;
 }) {
   try {
-    await supabase.from("property_interests").insert({
+    await localDb.from("property_interests").insert({
       name: input.name ?? null,
       phone: input.phone ?? null,
       property_ref: input.propertyRef ?? null,

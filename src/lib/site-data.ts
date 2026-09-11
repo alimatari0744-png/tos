@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { localDb } from "@/lib/local-db";
 import { correctBrandName } from "@/lib/utils";
 import {
   DEMO_GALLERY,
@@ -117,7 +117,7 @@ export function useSettings() {
   return useQuery({
     queryKey: ["site_settings"],
     queryFn: async (): Promise<SiteSettings | null> => {
-      const { data } = await supabase
+      const { data } = await localDb
         .from("site_settings")
         .select(
           "hero_image, hero_title_ar, hero_title_en, hero_subtitle_ar, hero_subtitle_en, whatsapp_number, contact_phone, contact_email, logo_image, primary_color, terms_ar, terms_en, privacy_ar, privacy_en, footer_text_ar, footer_text_en",
@@ -134,12 +134,12 @@ export function useProperties() {
     queryKey: ["properties"],
     queryFn: async (): Promise<Property[]> => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await localDb
           .from("properties")
           .select("*")
           .order("sort", { ascending: true });
         if (error) throw error;
-        const mapped = (data ?? []).map(mapProperty);
+        const mapped = ((data ?? []) as any[]).map(mapProperty);
         if (mapped.length >= 8) return mapped;
         const refs = new Set(mapped.map((p) => p.ref));
         return [...mapped, ...fallbackProperties.filter((p) => !refs.has(p.ref))];
@@ -156,7 +156,7 @@ export function useProperty(id: string) {
     queryKey: ["property", id],
     queryFn: async (): Promise<Property | null> => {
       try {
-        const { data } = await supabase.from("properties").select("*").eq("id", id).maybeSingle();
+        const { data } = await localDb.from("properties").select("*").eq("id", id).maybeSingle();
         if (data) return mapProperty(data);
       } catch {
         /* demo catalog */
@@ -170,12 +170,12 @@ export function usePropertyTypes() {
   return useQuery({
     queryKey: ["property_types"],
     queryFn: async (): Promise<ProductType[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await localDb
         .from("property_types")
         .select("*")
         .order("sort", { ascending: true });
       if (error) throw error;
-      return (data ?? []).map(mapType);
+      return ((data ?? []) as any[]).map(mapType);
     },
     staleTime: 60_000,
   });
@@ -209,21 +209,21 @@ export function useGeo() {
     queryKey: ["geo"],
     queryFn: async (): Promise<{ regions: GeoRegion[]; cities: GeoCity[] }> => {
       const [r, c, d] = await Promise.all([
-        supabase.from("regions").select("*").order("sort"),
-        supabase.from("cities").select("*").order("sort"),
-        supabase.from("districts").select("*").order("sort"),
+        localDb.from("regions").select("*").order("sort"),
+        localDb.from("cities").select("*").order("sort"),
+        localDb.from("districts").select("*").order("sort"),
       ]);
-      const cities: GeoCity[] = (c.data ?? []).map((city) => ({
+      const cities: GeoCity[] = ((c.data ?? []) as any[]).map((city) => ({
         id: city.id,
         regionId: city.region_id,
         label: { ar: city.label_ar, en: city.label_en },
         lat: Number(city.lat),
         lng: Number(city.lng),
-        districts: (d.data ?? [])
+        districts: ((d.data ?? []) as any[])
           .filter((x) => x.city_id === city.id)
           .map((x) => ({ id: x.id, label: { ar: x.label_ar, en: x.label_en } })),
       }));
-      const regions: GeoRegion[] = (r.data ?? []).map((reg) => ({
+      const regions: GeoRegion[] = ((r.data ?? []) as any[]).map((reg) => ({
         id: reg.id,
         label: { ar: reg.label_ar, en: reg.label_en },
         cities: cities.filter((x) => x.regionId === reg.id),
@@ -248,13 +248,13 @@ export function useTaxonomy() {
   return useQuery({
     queryKey: ["taxonomy"],
     queryFn: async (): Promise<Record<TaxonomyKind, TaxonomyOption[]>> => {
-      const { data } = await supabase.from("taxonomy_options").select("*").order("sort");
+      const { data } = await localDb.from("taxonomy_options").select("*").order("sort");
       const grouped: Record<TaxonomyKind, TaxonomyOption[]> = {
         desire: [],
         status: [],
         usage: [],
       };
-      (data ?? []).forEach((row) => {
+      ((data ?? []) as any[]).forEach((row) => {
         const opt: TaxonomyOption = {
           id: row.id,
           kind: row.kind as TaxonomyKind,

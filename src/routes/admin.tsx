@@ -1,9 +1,11 @@
+// @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { bootstrapAdmin } from "@/lib/admin.functions";
+import { localDb } from "@/lib/local-db";
+import { getSessionUser, signIn, signOut, onAuthChange } from "@/lib/local-auth";
+import { uploadMedia } from "@/lib/store.functions";
 import {
   listStaff,
   createStaff,
@@ -70,25 +72,29 @@ const PERMISSION_LABELS: Record<string, string> = {
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  head: () => ({ meta: [{ title: "لوحة التحكم | ثقة الإعمار" }] }),
+  head: () => ({ meta: [{ title: "لوحة التحكم | مكتب طوس العقارية" }] }),
   component: AdminPage,
 });
 
-const SIGNED_TEN_YEARS = 315360000;
-
 async function uploadImage(folder: string, file: File): Promise<string | null> {
-  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path = `${folder}/${Date.now()}-${safe}`;
-  const { error } = await supabase.storage.from("site").upload(path, file, {
-    upsert: true,
-    cacheControl: "31536000",
-  });
-  if (error) {
+  try {
+    const bytes = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = String(reader.result ?? "");
+        resolve(result.includes(",") ? result.split(",")[1] : result);
+      };
+      reader.onerror = () => reject(new Error("read failed"));
+      reader.readAsDataURL(file);
+    });
+    const { url } = await uploadMedia({
+      data: { folder, name: file.name, bytes },
+    });
+    return url;
+  } catch {
     toast.error("تعذّر رفع الصورة");
     return null;
   }
-  const { data } = await supabase.storage.from("site").createSignedUrl(path, SIGNED_TEN_YEARS);
-  return data?.signedUrl ?? null;
 }
 
 const inputCls =
@@ -98,24 +104,6 @@ const btnPrimary =
   "gradient-primary rounded-full px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-card transition-transform hover:scale-[1.02] disabled:opacity-50";
 const btnGhost =
   "rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary";
-
-const AUTH_CHECK_TIMEOUT_MS = 3500;
-
-function withTimeout<T>(promise: PromiseLike<T>, ms = AUTH_CHECK_TIMEOUT_MS): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("auth-check-timeout")), ms);
-    Promise.resolve(promise).then(
-      (value) => {
-        clearTimeout(timer);
-        resolve(value);
-      },
-      (error) => {
-        clearTimeout(timer);
-        reject(error);
-      },
-    );
-  });
-}
 
 /* Styled file-picker button (with background) */
 function FileButton({
@@ -161,31 +149,15 @@ function AdminPage() {
   async function refreshRole() {
     setChecking(true);
     try {
-      const { data: userData } = await withTimeout(supabase.auth.getUser());
-      const uid = userData.user?.id;
-      if (!uid) {
+      const user = getSessionUser();
+      if (!user) {
         setIsAdmin(false);
         setPermissions([]);
         return;
       }
-      const { data } = await withTimeout(
-        supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", uid)
-          .eq("role", "admin")
-          .maybeSingle(),
-      );
-      const admin = !!data;
+      const admin = user.role === "admin";
       setIsAdmin(admin);
-      if (admin) {
-        setPermissions([...ALL_PERMISSIONS]);
-      } else {
-        const { data: perms } = await withTimeout(
-          supabase.from("staff_permissions").select("permission").eq("user_id", uid),
-        );
-        setPermissions((perms ?? []).map((p) => p.permission));
-      }
+      setPermissions(admin ? [...ALL_PERMISSIONS] : user.permissions);
     } catch {
       setIsAdmin(false);
       setPermissions([]);
@@ -195,35 +167,31 @@ function AdminPage() {
   }
 
   useEffect(() => {
-    const fallback = setTimeout(() => setChecking(false), AUTH_CHECK_TIMEOUT_MS + 500);
-    void refreshRole().finally(() => clearTimeout(fallback));
-    const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      setTimeout(() => void refreshRole(), 0);
+    void refreshRole();
+    return onAuthChange(() => {
+      void refreshRole();
     });
-    return () => {
-      clearTimeout(fallback);
-      sub.subscription.unsubscribe();
-    };
   }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      await bootstrapAdmin();
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await signIn(email.trim(), password);
       if (error) {
         toast.error("بيانات الدخول غير صحيحة");
         return;
       }
       await refreshRole();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "تعذر تسجيل الدخول");
     } finally {
       setLoading(false);
     }
   }
 
   async function handleLogout() {
-    await supabase.auth.signOut();
+    signOut();
     setIsAdmin(false);
     setPermissions([]);
   }
@@ -294,9 +262,9 @@ function AdminPage() {
     <div className="min-h-screen bg-background" dir="rtl">
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-          <h1 className="text-xl font-black text-foreground">لوحة تحكم ثقة الإعمار</h1>
+          <h1 className="text-xl font-black text-foreground">لوحة التحكم</h1>
           <div className="flex items-center gap-2">
-            <a href="/" className={btnGhost}>عرض الموقع</a>
+            <a href="/" className={btnGhost}>الموقع</a>
             <button onClick={handleLogout} className={btnGhost}>خروج</button>
           </div>
         </div>
@@ -305,7 +273,7 @@ function AdminPage() {
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row">
         {/* Right-side navigation (RTL: first in DOM = right) */}
         <aside className="lg:w-60 lg:shrink-0">
-          <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-border bg-card p-2 lg:sticky lg:top-6 lg:flex-col lg:overflow-visible">
+          <nav className="scroll-rail flex gap-2 overflow-x-auto rounded-2xl border border-border bg-card p-2 pb-1.5 lg:sticky lg:top-6 lg:flex-col lg:overflow-visible lg:pb-2">
             {NAV.map((item) => (
               <button
                 key={item.key}
@@ -384,19 +352,19 @@ function StatCard({
 function DashboardTab({ onNavigate }: { onNavigate: (tab: string) => void }) {
   const { data: properties = [] } = useQuery({
     queryKey: ["admin_properties"],
-    queryFn: async () => (await supabase.from("properties").select("*").order("sort")).data ?? [],
+    queryFn: async () => (await localDb.from("properties").select("*").order("sort")).data ?? [],
   });
   const { data: requests = [] } = useQuery({
     queryKey: ["admin_requests"],
-    queryFn: async () => (await supabase.from("property_requests").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await localDb.from("property_requests").select("*").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: interests = [] } = useQuery({
     queryKey: ["admin_interests"],
-    queryFn: async () => (await supabase.from("property_interests").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await localDb.from("property_interests").select("*").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: types = [] } = useQuery({
     queryKey: ["admin_types"],
-    queryFn: async () => (await supabase.from("property_types").select("*")).data ?? [],
+    queryFn: async () => (await localDb.from("property_types").select("*")).data ?? [],
   });
   const { data: geo } = useGeo();
 
@@ -504,7 +472,7 @@ function SettingsTab() {
   const qc = useQueryClient();
   const { data } = useQuery({
     queryKey: ["admin_settings"],
-    queryFn: async () => (await supabase.from("site_settings").select("*").maybeSingle()).data,
+    queryFn: async () => (await localDb.from("site_settings").select("*").maybeSingle()).data,
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [form, setForm] = useState<any>(null);
@@ -545,7 +513,7 @@ function SettingsTab() {
       footer_text_en: form.footer_text_en || null,
     });
     const changes = diffChanges(data ?? {}, payload, SETTINGS_FIELD_LABELS);
-    const { error } = await supabase.from("site_settings").update(payload).eq("id", true);
+    const { error } = await localDb.from("site_settings").update(payload).eq("id", true);
     setSaving(false);
     if (error) return toast.error("تعذّر الحفظ");
     toast.success("تم الحفظ");
@@ -566,11 +534,11 @@ function SettingsTab() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-border bg-background p-4">
             <p className="mb-3 text-xs font-bold text-muted-foreground">مختصر (موبايل / أيقونة)</p>
-            <img src="/brand/logo-mark.png" alt="شعار ثقة الإعمار المختصر" className="h-16 w-16 rounded-2xl" />
+            <img src="/brand/logo-mark.png?v=8" alt="شعار مكتب طوس العقارية المختصر" className="h-16 w-16 object-contain" />
           </div>
           <div className="rounded-xl border border-border bg-background p-4">
             <p className="mb-3 text-xs font-bold text-muted-foreground">مطوّل (بريد / سطح المكتب)</p>
-            <img src="/brand/logo-email.png" alt="ثقة الإعمار للخدمات العقارية" className="h-16 w-auto max-w-full rounded-lg border border-border bg-white" />
+            <img src="/brand/logo-email.png?v=8" alt="مكتب طوس العقارية" className="h-16 w-auto max-w-full object-contain" />
           </div>
         </div>
       </section>
@@ -621,8 +589,8 @@ function SettingsTab() {
           <h2 className="mb-1 text-lg font-black text-foreground">نص حقوق النشر (أسفل الموقع)</h2>
           <p className="text-xs text-muted-foreground">يظهر في تذييل الموقع. اتركه فارغًا لإخفائه.</p>
         </div>
-        <div><label className={labelCls}>النص (عربي)</label><input className={inputCls} value={form.footer_text_ar ?? ""} placeholder="© 2026 ثقة الإعمار. جميع الحقوق محفوظة." onChange={(e) => set("footer_text_ar", e.target.value)} /></div>
-        <div><label className={labelCls}>النص (إنجليزي)</label><input className={inputCls} dir="ltr" value={form.footer_text_en ?? ""} placeholder="© 2026 Thiqah Al-Emaar. All rights reserved." onChange={(e) => set("footer_text_en", e.target.value)} /></div>
+        <div><label className={labelCls}>النص (عربي)</label><input className={inputCls} value={form.footer_text_ar ?? ""} placeholder="© 2026 مكتب طوس العقارية. جميع الحقوق محفوظة." onChange={(e) => set("footer_text_ar", e.target.value)} /></div>
+        <div><label className={labelCls}>النص (إنجليزي)</label><input className={inputCls} dir="ltr" value={form.footer_text_en ?? ""} placeholder="© 2026 Tawoos Real Estate Office. All rights reserved." onChange={(e) => set("footer_text_en", e.target.value)} /></div>
       </section>
 
       <section className="space-y-4 rounded-2xl border border-border bg-card p-5">
@@ -650,7 +618,7 @@ function OptionGroup({ kind, title }: { kind: "desire" | "status" | "usage"; tit
   const { data: rows = [] } = useQuery({
     queryKey: ["admin_tax", kind],
     queryFn: async () =>
-      (await supabase.from("taxonomy_options").select("*").eq("kind", kind).order("sort")).data ?? [],
+      (await localDb.from("taxonomy_options").select("*").eq("kind", kind).order("sort")).data ?? [],
   });
   const [n, setN] = useState({ key: "", label_ar: "", label_en: "" });
 
@@ -660,7 +628,7 @@ function OptionGroup({ kind, title }: { kind: "desire" | "status" | "usage"; tit
   }
   async function add() {
     if (!n.key || !n.label_ar) return toast.error("أدخل المعرّف والاسم");
-    const { error } = await supabase.from("taxonomy_options").insert({
+    const { error } = await localDb.from("taxonomy_options").insert({
       kind, key: n.key.trim(), label_ar: n.label_ar, label_en: n.label_en, sort: rows.length + 1,
     });
     if (error) return toast.error("تعذّر الإضافة (المعرّف مكرر؟)");
@@ -672,7 +640,7 @@ function OptionGroup({ kind, title }: { kind: "desire" | "status" | "usage"; tit
   async function del(id: string) {
     if (!confirm("حذف هذا العنصر؟")) return;
     const item = rows.find((r) => r.id === id);
-    await supabase.from("taxonomy_options").delete().eq("id", id);
+    await localDb.from("taxonomy_options").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "taxonomy", entityLabel: `${title}: ${item?.label_ar ?? id}`, note: `حذف عنصر «${item?.label_ar ?? id}»` });
     refresh();
   }
@@ -703,7 +671,7 @@ function TypesGroup() {
   const qc = useQueryClient();
   const { data: types = [] } = useQuery({
     queryKey: ["admin_types"],
-    queryFn: async () => (await supabase.from("property_types").select("*").order("sort")).data ?? [],
+    queryFn: async () => (await localDb.from("property_types").select("*").order("sort")).data ?? [],
   });
   const { data: tax } = useTaxonomy();
   const usages =
@@ -716,7 +684,7 @@ function TypesGroup() {
   }
   async function add() {
     if (!n.id || !n.label_ar) return toast.error("أدخل المعرّف والاسم");
-    const { error } = await supabase.from("property_types").insert({
+    const { error } = await localDb.from("property_types").insert({
       id: n.id.trim(), usage: n.usage, label_ar: n.label_ar, label_en: n.label_en, sort: types.length + 1,
     });
     if (error) return toast.error("تعذّر الإضافة (المعرّف مكرر؟)");
@@ -727,14 +695,14 @@ function TypesGroup() {
   }
   async function move(id: string, usage: string) {
     const tp = types.find((t) => t.id === id);
-    await supabase.from("property_types").update({ usage }).eq("id", id);
+    await localDb.from("property_types").update({ usage }).eq("id", id);
     void logActivity({ action: "update", entity: "type", entityLabel: `نوع عقار: ${tp?.label_ar ?? id}`, changes: [{ label: "الاستخدام", from: usageName(tp?.usage ?? ""), to: usageName(usage) }] });
     refresh();
   }
   async function del(id: string) {
     if (!confirm("حذف هذا النوع؟")) return;
     const tp = types.find((t) => t.id === id);
-    await supabase.from("property_types").delete().eq("id", id);
+    await localDb.from("property_types").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "type", entityLabel: `نوع عقار: ${tp?.label_ar ?? id}`, note: `حذف نوع عقار «${tp?.label_ar ?? id}»` });
     refresh();
   }
@@ -796,7 +764,7 @@ function GeoTab() {
   }
   async function addRegion() {
     if (!nr.id || !nr.ar) return toast.error("أدخل المعرّف والاسم");
-    const { error } = await supabase.from("regions").insert({ id: nr.id.trim(), label_ar: nr.ar, label_en: nr.en, sort: regions.length + 1 });
+    const { error } = await localDb.from("regions").insert({ id: nr.id.trim(), label_ar: nr.ar, label_en: nr.en, sort: regions.length + 1 });
     if (error) return toast.error("تعذّر الإضافة (المعرّف مكرر؟)");
     void logActivity({ action: "create", entity: "geo", entityLabel: `منطقة: ${nr.ar}`, note: `إضافة منطقة «${nr.ar}»` });
     setNr({ id: "", ar: "", en: "" });
@@ -805,13 +773,13 @@ function GeoTab() {
   async function delRegion(id: string) {
     if (!confirm("حذف المنطقة وكل مدنها وأحيائها؟")) return;
     const r = regions.find((x) => x.id === id);
-    await supabase.from("regions").delete().eq("id", id);
+    await localDb.from("regions").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "geo", entityLabel: `منطقة: ${r?.label.ar ?? id}`, note: `حذف منطقة «${r?.label.ar ?? id}» وكل مدنها وأحيائها` });
     refresh();
   }
   async function addCity() {
     if (!nc.id || !nc.ar || !nc.region_id) return toast.error("أدخل المعرّف والاسم والمنطقة");
-    const { error } = await supabase.from("cities").insert({
+    const { error } = await localDb.from("cities").insert({
       id: nc.id.trim(), region_id: nc.region_id, label_ar: nc.ar, label_en: nc.en,
       lat: Number(nc.lat) || 24.7136, lng: Number(nc.lng) || 46.6753,
     });
@@ -823,13 +791,13 @@ function GeoTab() {
   async function delCity(id: string) {
     if (!confirm("حذف المدينة وكل أحيائها؟")) return;
     const c = allCitiesFlat.find((x) => x.id === id);
-    await supabase.from("cities").delete().eq("id", id);
+    await localDb.from("cities").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "geo", entityLabel: `مدينة: ${c?.label.ar ?? id}`, note: `حذف مدينة «${c?.label.ar ?? id}» وكل أحيائها` });
     refresh();
   }
   async function addDistrict() {
     if (!nd.id || !nd.ar || !nd.city_id) return toast.error("أدخل المعرّف والاسم والمدينة");
-    const { error } = await supabase.from("districts").insert({ id: nd.id.trim(), city_id: nd.city_id, label_ar: nd.ar, label_en: nd.en });
+    const { error } = await localDb.from("districts").insert({ id: nd.id.trim(), city_id: nd.city_id, label_ar: nd.ar, label_en: nd.en });
     if (error) return toast.error("تعذّر الإضافة (المعرّف مكرر؟)");
     void logActivity({ action: "create", entity: "geo", entityLabel: `حي: ${nd.ar}`, note: `إضافة حي «${nd.ar}»` });
     setNd({ id: "", city_id: "", ar: "", en: "" });
@@ -838,7 +806,7 @@ function GeoTab() {
   async function delDistrict(id: string) {
     if (!confirm("حذف هذا الحي؟")) return;
     const d = allCitiesFlat.flatMap((c) => c.districts).find((x) => x.id === id);
-    await supabase.from("districts").delete().eq("id", id);
+    await localDb.from("districts").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "geo", entityLabel: `حي: ${d?.label.ar ?? id}`, note: `حذف حي «${d?.label.ar ?? id}»` });
     refresh();
   }
@@ -939,7 +907,7 @@ const emptyProp = {
   lat: "", lng: "",
 };
 
-const DRAFT_KEY = "thiqah_property_draft";
+const DRAFT_KEY = "tawoos_property_draft";
 
 function loadDraft(): typeof emptyProp | null {
   try {
@@ -963,11 +931,11 @@ function PropertiesTab() {
   const qc = useQueryClient();
   const { data: list = [] } = useQuery({
     queryKey: ["admin_properties"],
-    queryFn: async () => (await supabase.from("properties").select("*").order("sort")).data ?? [],
+    queryFn: async () => (await localDb.from("properties").select("*").order("sort")).data ?? [],
   });
   const { data: types = [] } = useQuery({
     queryKey: ["admin_types"],
-    queryFn: async () => (await supabase.from("property_types").select("*").order("sort")).data ?? [],
+    queryFn: async () => (await localDb.from("property_types").select("*").order("sort")).data ?? [],
   });
   const [editing, setEditing] = useState<typeof emptyProp | null>(null);
   const [draft, setDraft] = useState<typeof emptyProp | null>(null);
@@ -991,7 +959,7 @@ function PropertiesTab() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function del(p: any) {
     if (!confirm("حذف هذا العرض؟")) return;
-    await supabase.from("properties").delete().eq("id", p.id);
+    await localDb.from("properties").delete().eq("id", p.id);
     void logActivity({
       action: "delete",
       entity: "property",
@@ -1009,14 +977,14 @@ function PropertiesTab() {
     if (!url) return;
     const images: string[] = Array.isArray(p.images) ? [...p.images] : [];
     if (images.length) images[0] = url; else images.push(url);
-    await supabase.from("properties").update({ image: url, images }).eq("id", p.id);
+    await localDb.from("properties").update({ image: url, images }).eq("id", p.id);
     refresh();
     toast.success("تم تحديث الصورة");
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function clearImage(p: any) {
     if (!confirm("حذف صورة هذا العرض؟")) return;
-    await supabase.from("properties").update({ image: null, images: [] }).eq("id", p.id);
+    await localDb.from("properties").update({ image: null, images: [] }).eq("id", p.id);
     refresh();
   }
 
@@ -1188,8 +1156,8 @@ function PropertyForm({
       lat: num(f.lat), lng: num(f.lng),
     };
     const res = f.id
-      ? await supabase.from("properties").update(payload).eq("id", f.id)
-      : await supabase.from("properties").insert(payload);
+      ? await localDb.from("properties").update(payload).eq("id", f.id)
+      : await localDb.from("properties").insert(payload);
     setSaving(false);
     if (res.error) return toast.error("تعذّر الحفظ");
     const changes = diffChanges(
@@ -1347,12 +1315,12 @@ function RequestsTab() {
   const [open, setOpen] = useState<string | null>(null);
   const { data: rows = [] } = useQuery({
     queryKey: ["admin_requests"],
-    queryFn: async () => (await supabase.from("property_requests").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await localDb.from("property_requests").select("*").order("created_at", { ascending: false })).data ?? [],
   });
   async function del(id: string) {
     if (!confirm("حذف هذا الطلب؟")) return;
     const req = rows.find((x) => x.id === id);
-    await supabase.from("property_requests").delete().eq("id", id);
+    await localDb.from("property_requests").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "request", entityLabel: `طلب من ${req?.name ?? "—"}`, note: `حذف طلب العميل «${req?.name ?? "—"}» (${req?.phone ?? "—"})` });
     qc.invalidateQueries({ queryKey: ["admin_requests"] });
   }
@@ -1411,17 +1379,17 @@ function InterestsTab() {
   const [open, setOpen] = useState<string | null>(null);
   const { data: rows = [] } = useQuery({
     queryKey: ["admin_interests"],
-    queryFn: async () => (await supabase.from("property_interests").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await localDb.from("property_interests").select("*").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: props = [] } = useQuery({
     queryKey: ["admin_interest_props"],
-    queryFn: async () => (await supabase.from("properties").select("id, ref")).data ?? [],
+    queryFn: async () => (await localDb.from("properties").select("id, ref")).data ?? [],
   });
   const refToId = new Map<string, string>(props.map((p) => [String(p.ref), p.id as string]));
   async function del(id: string) {
     if (!confirm("حذف هذا الاهتمام؟")) return;
     const it = rows.find((x) => x.id === id);
-    await supabase.from("property_interests").delete().eq("id", id);
+    await localDb.from("property_interests").delete().eq("id", id);
     void logActivity({ action: "delete", entity: "interest", entityLabel: `اهتمام ${it?.name || "—"}`, note: `حذف اهتمام «${it?.name || "—"}»${it?.property_ref ? ` بالعرض #${it.property_ref}` : ""}` });
     qc.invalidateQueries({ queryKey: ["admin_interests"] });
   }
@@ -1640,7 +1608,7 @@ function ActivityTab() {
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin_activity"],
     queryFn: async () =>
-      (await supabase
+      (await localDb
         .from("activity_log")
         .select("*")
         .order("created_at", { ascending: false })

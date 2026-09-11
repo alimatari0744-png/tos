@@ -30,12 +30,12 @@ import { useLanguage } from "@/i18n/LanguageContext";
 export const Route = createFileRoute("/properties/$id")({
   head: () => ({
     meta: [
-      { title: "تفاصيل العقار | ثقة الإعمار" },
+      { title: "تفاصيل العقار | مكتب طوس العقارية" },
       {
         name: "description",
-        content: "تفاصيل العقار وعروض ثقة الإعمار العقارية في المملكة العربية السعودية.",
+        content: "تفاصيل العقار وعروض مكتب طوس العقارية في المملكة العربية السعودية.",
       },
-      { property: "og:title", content: "تفاصيل العقار | ثقة الإعمار" },
+      { property: "og:title", content: "تفاصيل العقار | مكتب طوس العقارية" },
     ],
   }),
   component: PropertyDetail,

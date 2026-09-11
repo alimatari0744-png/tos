@@ -32,8 +32,8 @@ export function InterestDialog({
     setTouched(true);
     if (!canSubmit) return;
 
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { error } = await supabase.from("property_interests").insert({
+    const { localDb } = await import("@/lib/local-db");
+    const { error } = await localDb.from("property_interests").insert({
       name: name.trim(),
       phone: `+966${phone}`,
       property_ref: propertyRef ?? null,
