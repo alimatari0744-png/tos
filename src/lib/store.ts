@@ -1,6 +1,6 @@
 import seed from "../../data/db.json";
 
-const STORAGE_KEY = "tawoos-db-v1";
+const STORAGE_KEY = "tawoos-db-v2";
 
 export type JsonRecord = Record<string, any>;
 

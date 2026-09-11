@@ -59,7 +59,7 @@ export function Footer() {
                   className="hover:text-primary"
                   dir="ltr"
                 >
-                  WhatsApp
+                  {phone || "+966 56 522 9526"}
                 </a>
               </li>
             </ul>

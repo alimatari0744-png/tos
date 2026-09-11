@@ -9,7 +9,7 @@ import {
 } from "@/data/properties";
 import type { ProductType, Usage } from "@/data/catalog";
 
-export const DEFAULT_WHATSAPP = "966500000000";
+export const DEFAULT_WHATSAPP = "966565229526";
 
 export const fallbackGallery = DEMO_GALLERY;
 
